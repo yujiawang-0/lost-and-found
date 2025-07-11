@@ -14,12 +14,29 @@ const itemSchema = new mongoose.Schema({
         required: false,
     }, 
     category: {
-        type: String, 
+        type: String,
         enum: [
-            'Electronics', 'Wallet', 'Matriculation Card', 'Bag', 'Stationery', 'Clothing'
+            'Electronics', 
+            'Wallet', 
+            'Identification Documents', 
+            'Keys', 
+            'Bag', 
+            'Stationery', 
+            'Clothing', 
+            'Jewellery', 
+            'Accessories', 
+            'Sports Equipment', 
+            'Eyewear', 
+            'Footwear', 
+            'Toys', 
+            'Pet Items',
+            'Cash', 
+            'Travel Documents', 
+            'Household Items', 
+            'Others'
         ],
         required: false,
-    }, 
+    },
     status: {
         type: String, 
         enum: ['lost', 'found'],
@@ -27,21 +44,18 @@ const itemSchema = new mongoose.Schema({
         immutable: true
     },
     location: {
-        type: String,
-        enum: [
-            'COM1', 'COM2', 'COM3', 'SoC', 'LT19',
-            'Science', 'S16', 'S17', 'LT27', 'LT28',
-            'Engineering', 'E1', 'E2', 'E3',
-            'Business School', 'BIZ1', 'BIZ2',
-            'FASS', 'AS1', 'AS2', 'AS3', 'AS4',
-            'Law (BTC)', 'Medicine', 'Duke-NUS',
-            'SDE1', 'SDE2', 'SDE4', 'Music Conservatory',
-            'UTown', 'Cinnamon', 'Tembusu', 'RC4', 'CAPT', 'Yale-NUS',
-            'PGP', 'Ridge View', 'Eusoff', 'Temasek', 'Sheares', 'KR Hall', 'KE Hall', 'Raffles Hall',
-            'The Deck', 'Frontier', 'Techno Edge', 'Fine Food', 'Food Clique', 'PGP Canteen', 'YIH Food Court', 'Flavours@UTown',
-            'Central Library', 'YIH', 'NUS Co-op', 'UCC', 'NUH', 'Sports Centre', 'UTown Green', 'Cannot Remember'
-        ],
-        required: true,
+        type: {
+            type: String, 
+            enum: ['Point'], 
+            required: false
+        }, 
+        coordinates: {
+            type: [Number], 
+            required: false
+        }, 
+        address: {
+            type: String
+        }
     }, 
     dateLost: {
         type: Date, 
