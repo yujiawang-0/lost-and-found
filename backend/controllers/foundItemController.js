@@ -1,34 +1,30 @@
 import Item from '../models/item.model.js';
 import mongoose from 'mongoose';
 
-export const getLostItems = async (req, res) => {
-    try {
-        const items = await Item.find({status: 'lost'});
-        res.status(200).json({success: true, data: items});
-    } catch (error) {
-        res.status(500).json({success: false, message: "Server Error"});
-    }
-}
 
 export const getFoundItems = async (req, res) => {
+    //res.status(200).send("you just fetched found items");
     try {
-        const items = await Item.find({status: 'lost'});
+        const items = await Item.find({status: 'found'}).sort({ createdAt: -1 }); // -1 will sort in desc. order (newest first)
         res.status(200).json({success: true, data: items});
     } catch (error) {
+        console.error("Error in getFoundItems controller");
+        res.status(500).json({success: false, message: "Internal Server Error"});
+    }
+}
+
+
+export const getFoundItemById = async (req, res) => {
+    try {
+        const item = await Item.findById(req.params.id);
+        if(!item) return res.status(404).json({ message: "Note not found"})
+        res.status(200).json({success: true, data: item});
+    } catch (error) {
+        console.error("Error in getFoundItemById controller", error);
         res.status(500).json({success: false, message: "Server Error"});
     }
 }
 
-export const getFilteredLostItems = async (req, res) => {
-    try {
-        const query = {status: 'lost', ...req.query}; 
-        const items = await Item.find(query);
-        res.status(200).json({success: true, data: items});
-        // here are the items u asked for, and the request worked 
-    } catch (error) {
-        res.status(500).json({success: false, message: "Server Error"});
-    }
-}
 
 export const getFilteredFoundItems = async (req, res) => {
     try {
@@ -40,7 +36,8 @@ export const getFilteredFoundItems = async (req, res) => {
     }
 }
 
-export const postItem = async (req, res) => {
+
+export const postFoundItem = async (req, res) => {
     const item = req.body;
 
     if(!item.name || !item.description) {
@@ -57,32 +54,26 @@ export const postItem = async (req, res) => {
     }
 }
 
-export const updateItem = async (req, res) => {
+export const updateFoundItem = async (req, res) => {
     const {id} = req.params;
-    if (!mongoose.Types.ObjectId.isValid(id)){
-        return res.status(404).json({success: false, message: "Invalid Product Id"});
-    }
-
     try {
         const updates = {...req.body};
-        delete update.status;
-        const updatedItem = await Item.findByIdAndUpdate(id, update, {new: true});
+        delete updates.status;
+        const updatedItem = await Item.findByIdAndUpdate(id, updates, {new: true});
+        if(!updatedItem) return res.status(404).json({success: false, message: "Invalid Item Id"});
         res.status(200).json({success: true, data: updatedItem});
     } catch (error) {
         res.status(500).json({success: false, message: "Server Error"});
     }
 }
 
-export const deleteItem = async (req, res) => {
+export const deleteFoundItem = async (req, res) => {
     const {id} = req.params;
     
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-        return res.status(404).json({success: false, message: "Invalid Product Id"});
-    }
-
     try {
-        await Product.findByIdAndDelete(id); // need not send items back to frontend
-        res.status(200).json({success: true, message: "Product deleted"});
+        const deletedItem = await Item.findByIdAndDelete(id); // need not send items back to frontend
+        if(!deletedItem) return res.status(404).json({success: false, message: "Invalid Item Id"});
+        res.status(200).json({success: true, message: "Item deleted"});
     } catch (error) {
         res.status(500).json({success: false, message: "Server Error"});
     }
