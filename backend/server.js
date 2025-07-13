@@ -1,20 +1,46 @@
-import express from 'express';
 import dotenv from "dotenv";
-import { connectDB } from './config/db.js';
-
 dotenv.config();
 
+import express from 'express';
+import { connectDB } from './config/db.js';
+import foundItemRoute from "./routes/foundItemRoute.js";
+import lostItemRoute from "./routes/lostItemRoute.js";
+import rateLimiter from "./middleware/rateLimiter.js"
+
 const app = express();
+const PORT = process.env.PORT || 8081;
+
+
+//middleware -- function that occurs in the middle between the request and the response
+app.use(express.json()); // this middleware will parse the json bodies: requ.body
+
+app.use(rateLimiter);
+
+// our simple custom middleware: console log for api use
+app.use((req, res, next) => {
+    console.log(`Request method is ${req.method} & Request URL is ${req.url}`);
+    next();
+});
+
+// authentication check middleware to be added here
+
+// rate limiting
+
+
+
+app.use("/lost", lostItemRoute);
+app.use("/found", foundItemRoute);
 
 app.get("/", (req, res) => {
     res.send("Server is ready");
 })
 
-// console.log(process.env.MONGO_URI); don't need this to show
+// console.log(process.env.MONGO_URI); // don't need this to show
 
-app.listen(5000, () => {
-    connectDB();
-    console.log('Server started at http://localhost:5000');
+// connect to the database first then listen on the port
+connectDB().then(() => {
+    app.listen(PORT, () => {
+        console.log('Server started at PORT:', PORT); //http://localhost:5000');
+    });
 });
-
 

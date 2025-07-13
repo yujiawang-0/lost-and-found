@@ -1,5 +1,8 @@
 import mongoose from "mongoose";
 
+// 1st stem: you need to create a schema
+// 2nd step: you would create a model based off of that schema
+
 const itemSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -66,9 +69,9 @@ const itemSchema = new mongoose.Schema({
         required: false,
     }
     }, {
-        timestamps: true 
+        timestamps: true //createdAt, updatedAt
     });
 
-    const Item = mongoose.model('Items', itemSchema);
+    const Item = mongoose.model('Item', itemSchema);
 
     export default Item;
