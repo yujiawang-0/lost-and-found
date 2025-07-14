@@ -1,11 +1,12 @@
-import { useState } from 'react'
+// import { useState } from 'react'
 import './App.css'
 import {Route, Routes } from "react-router";
 import LostPage from "./pages/LostPage"; // lost page is the defacto homepage
 import FoundPage from "./pages/FoundPage"; 
 import ItemDetailPage from "./pages/ItemDetailPage"; 
 import SettingsPage from "./pages/SettingsPage"; 
-import { Toaster, toast } from "react-hot-toast";
+
+// import { Toaster, toast } from "react-hot-toast";
 
 
 
@@ -13,26 +14,52 @@ import { Toaster, toast } from "react-hot-toast";
 // All packages except `@mantine/hooks` require styles imports
 import '@mantine/core/styles.css';
 
-import { MantineProvider } from '@mantine/core';
+import { MantineProvider, AppShell, Burger} from '@mantine/core';
+import { Navbar } from './components/NavbarComponent/Navbar'
+import { useDisclosure } from '@mantine/hooks';
+import { Demo } from './components/TestComponent/Demo';
+import { Header } from './components/Header';
+
 
 
 export default function App() {
 
+  const [opened, { toggle }] = useDisclosure();
 
-  return <MantineProvider>{
+  return (
     <div>
-      {/* <Toaster position='top-center' />
-      <button onClick={() => toast.success("congratulations")}>Click me</button> */}
+      <AppShell
+      header={{ height: 60 }}
+      navbar={{
+        width: 300,
+        breakpoint: 'sm',
+        collapsed: { mobile: !opened },
+      }}
+      padding="md"
+      >
+        <AppShell.Header>
+          <Header />
+        </AppShell.Header>
 
-      <Routes>
-        <Route path='/lost' element={<LostPage />} />
-        <Route path='/found' element={<FoundPage />} />
-        <Route path='/lost/:id' element={<ItemDetailPage />} />
-        <Route path='/found/:id' element={<ItemDetailPage />} />
-        <Route path='/settings' element={<SettingsPage />} />
-      </Routes>
+        <AppShell.Navbar p="md">
+          <Navbar />
+        </AppShell.Navbar>
 
+        <AppShell.Main>
+          <Demo />
+        </AppShell.Main>
+
+        <Routes>
+          <Route path='/' element={<LostPage />} />
+          <Route path='/lost' element={<LostPage />} />
+          <Route path='/found' element={<FoundPage />} />
+          <Route path='/lost/:id' element={<ItemDetailPage />} />
+          <Route path='/found/:id' element={<ItemDetailPage />} />
+          <Route path='/settings' element={<SettingsPage />} />
+        </Routes>
+    </AppShell> 
 
     </div>
-    }</MantineProvider>;
+  );
 }
+
