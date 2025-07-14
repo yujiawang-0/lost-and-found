@@ -1,35 +1,65 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+// import { useState } from 'react'
 import './App.css'
+import {Route, Routes } from "react-router";
+import LostPage from "./pages/LostPage"; // lost page is the defacto homepage
+import FoundPage from "./pages/FoundPage"; 
+import ItemDetailPage from "./pages/ItemDetailPage"; 
+import SettingsPage from "./pages/SettingsPage"; 
 
-function App() {
-  const [count, setCount] = useState(0)
+// import { Toaster, toast } from "react-hot-toast";
+
+
+
+// Import styles of packages that you've installed.
+// All packages except `@mantine/hooks` require styles imports
+import '@mantine/core/styles.css';
+
+import { MantineProvider, AppShell, Burger} from '@mantine/core';
+import { Navbar } from './components/NavbarComponent/Navbar'
+import { useDisclosure } from '@mantine/hooks';
+import { Demo } from './components/TestComponent/Demo';
+import { Header } from './components/Header';
+
+
+
+export default function App() {
+
+  const [opened, { toggle }] = useDisclosure();
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <div>
+      <AppShell
+      header={{ height: 60 }}
+      navbar={{
+        width: 300,
+        breakpoint: 'sm',
+        collapsed: { mobile: !opened },
+      }}
+      padding="md"
+      >
+        <AppShell.Header>
+          <Header />
+        </AppShell.Header>
+
+        <AppShell.Navbar p="md">
+          <Navbar />
+        </AppShell.Navbar>
+
+        <AppShell.Main>
+          <Demo />
+        </AppShell.Main>
+
+        <Routes>
+          <Route path='/' element={<LostPage />} />
+          <Route path='/lost' element={<LostPage />} />
+          <Route path='/found' element={<FoundPage />} />
+          <Route path='/lost/:id' element={<ItemDetailPage />} />
+          <Route path='/found/:id' element={<ItemDetailPage />} />
+          <Route path='/settings' element={<SettingsPage />} />
+        </Routes>
+    </AppShell> 
+
+    </div>
+  );
 }
 
-export default App

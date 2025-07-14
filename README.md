@@ -10,4 +10,5 @@ lost and found web page
 
 ## future features
 - user authentication middleware (no creating of lost / found items unless you are authenticated)
+- chat feature (like carousell)
 - 
