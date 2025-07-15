@@ -2,7 +2,7 @@
 import './App.css'
 import {Route, Routes } from "react-router";
 import LostPage from "./pages/LostPage"; // lost page is the defacto homepage
-import FoundPage from "./pages/FoundPage"; 
+import FoundPage from "./pages/FoundPage";
 import ItemDetailPage from "./pages/ItemDetailPage"; 
 import SettingsPage from "./pages/SettingsPage"; 
 
@@ -53,6 +53,8 @@ export default function App() {
           <Route path='/' element={<LostPage />} />
           <Route path='/lost' element={<LostPage />} />
           <Route path='/found' element={<FoundPage />} />
+          <Route path='/createLostItem' element={<createLostItem/>} />
+          <Route path='/createFoundItem' element={<createFoundItem/>} />
           <Route path='/lost/:id' element={<ItemDetailPage />} />
           <Route path='/found/:id' element={<ItemDetailPage />} />
           <Route path='/settings' element={<SettingsPage />} />
