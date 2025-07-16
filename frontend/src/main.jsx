@@ -7,11 +7,13 @@ import {Toaster} from "react-hot-toast"
 import {MantineProvider } from '@mantine/core'
 
 createRoot(document.getElementById('root')).render(
-  <MantineProvider> 
+  
     <StrictMode>
+      <MantineProvider> 
       <BrowserRouter>
         <App />
       </BrowserRouter>
+      </MantineProvider>
     </StrictMode>
-  </MantineProvider>,
+  
 )

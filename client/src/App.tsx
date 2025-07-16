@@ -37,22 +37,51 @@ export default function App() {
       </AppShell.Header>
 
       <AppShell.Navbar p="md">
-        navbar
+        <Navbar />
       </AppShell.Navbar>
 
       <AppShell.Main>Main</AppShell.Main>
-      
-      <Routes>
-        <Route path="/" element={<LostPage />} />
-        <Route path="/lost" element={<LostPage />} />
-        <Route path="/found" element={<FoundPage />} />
-        <Route path="/lost/:id" element={<ItemDetailPage />} />
-        <Route path="/found/:id" element={<ItemDetailPage />} />
-        <Route path="/settings" element={<SettingsPage />} />
-      </Routes>
-
     </AppShell>
   );
+
+
+
+  //   <AppShell
+  //     header={{ height: 60 }}
+  //     navbar={{
+  //       width: 300,
+  //       breakpoint: 'sm',
+  //       collapsed: { mobile: !opened },
+  //     }}
+  //     padding="md"
+  //   >
+  //     <AppShell.Header>
+  //       <Burger
+  //         opened={opened}
+  //         onClick={toggle}
+  //         hiddenFrom="sm"
+  //         size="sm"
+  //       />
+  //       <div>Logo</div>
+  //     </AppShell.Header>
+
+  //     <AppShell.Navbar p="md">
+  //       navbar
+  //     </AppShell.Navbar>
+
+  //     <AppShell.Main>Main</AppShell.Main>
+      
+  //     <Routes>
+  //       <Route path="/" element={<LostPage />} />
+  //       <Route path="/lost" element={<LostPage />} />
+  //       <Route path="/found" element={<FoundPage />} />
+  //       <Route path="/lost/:id" element={<ItemDetailPage />} />
+  //       <Route path="/found/:id" element={<ItemDetailPage />} />
+  //       <Route path="/settings" element={<SettingsPage />} />
+  //     </Routes>
+
+  //   </AppShell>
+  // );
 }
 
 

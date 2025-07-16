@@ -27,7 +27,6 @@ export default function App() {
   const [opened, { toggle }] = useDisclosure();
 
   return (
-    <div>
       <AppShell
       header={{ height: 60 }}
       navbar={{
@@ -36,30 +35,60 @@ export default function App() {
         collapsed: { mobile: !opened },
       }}
       padding="md"
-      >
-        <AppShell.Header>
-          <Header />
-        </AppShell.Header>
+    >
+      <AppShell.Header>
+        <Burger
+          opened={opened}
+          onClick={toggle}
+          hiddenFrom="sm"
+          size="sm"
+        />
+        <div>Logo</div>
+      </AppShell.Header>
 
-        <AppShell.Navbar p="md">
-          <Navbar />
-        </AppShell.Navbar>
+      <AppShell.Navbar p="md">
+        <Navbar />
+      </AppShell.Navbar>
 
-        <AppShell.Main>
-          <Demo />
-        </AppShell.Main>
-
-        <Routes>
-          <Route path='/' element={<LostPage />} />
-          <Route path='/lost' element={<LostPage />} />
-          <Route path='/found' element={<FoundPage />} />
-          <Route path='/lost/:id' element={<ItemDetailPage />} />
-          <Route path='/found/:id' element={<ItemDetailPage />} />
-          <Route path='/settings' element={<SettingsPage />} />
-        </Routes>
-    </AppShell> 
-
-    </div>
+      <AppShell.Main>Main</AppShell.Main>
+    </AppShell>
   );
+
+
+
+  //   <div>
+  //     <AppShell
+  //     header={{ height: 60 }}
+  //     navbar={{
+  //       width: 300,
+  //       breakpoint: 'sm',
+  //       collapsed: { mobile: !opened },
+  //     }}
+  //     padding="md"
+  //     >
+  //       <AppShell.Header>
+  //         <Header />
+  //       </AppShell.Header>
+
+  //       <AppShell.Navbar p="md">
+  //         <Navbar />
+  //       </AppShell.Navbar>
+
+  //       <AppShell.Main>
+  //         <Demo />
+  //       </AppShell.Main>
+
+  //       <Routes>
+  //         <Route path='/' element={<LostPage />} />
+  //         <Route path='/lost' element={<LostPage />} />
+  //         <Route path='/found' element={<FoundPage />} />
+  //         <Route path='/lost/:id' element={<ItemDetailPage />} />
+  //         <Route path='/found/:id' element={<ItemDetailPage />} />
+  //         <Route path='/settings' element={<SettingsPage />} />
+  //       </Routes>
+  //   </AppShell> 
+
+  //   </div>
+  // );
 }
 
