@@ -35,7 +35,8 @@
     "react-dom": "^19.1.0",
     "react-hot-toast": "^2.5.2",
     "react-router": "^7.6.3",
-    "recharts": "^2.15.4"
+    "recharts": "^2.15.4",
+    "use-places-autocomplete": "^4.0.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.30.1",
