@@ -1,5 +1,8 @@
 import Item from '../models/item.model.js';
+import multer from 'multer';
 import mongoose from 'mongoose';
+
+const upload = multer({dest: 'uploads/'}); // must be spelt as dest
 
 export const getLostItems = async (req, res) => {
     //res.status(200).send("you just fetched lost items");
@@ -38,13 +41,20 @@ export const getFilteredLostItems = async (req, res) => {
 
 
 export const postLostItem = async (req, res) => {
-    const item = req.body;
+    const item = req.body; // multer parse text fields into body
+    const file = req.file; // multer will attach file to req.file
+
+    // multer separates the text fields from the uploaded file 
 
     if(!item.name || !item.description) {
         return res.status(400).json({success: false, message: "Please provide required fields" });
     }
 
-    const newItem = new Item(item); // creates item in backend
+    const newItem = new Item({
+        ...item, 
+        image: file ? file.filename : null
+    }); // creates item in backend
+    // follow naming in the schema 
 
     try { 
         await newItem.save();

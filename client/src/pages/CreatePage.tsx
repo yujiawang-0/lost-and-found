@@ -14,7 +14,7 @@ interface FormValues {
   location: string;
   dateLost: string;
   status: string;
-}
+} // define the shape of the data 
 
 interface Location {
   lat: number;
@@ -23,7 +23,7 @@ interface Location {
 }
 
 function CreatePage() {
-  const form = useForm<FormValues>({
+  const form = useForm<FormValues>({ // actual instance of FormValues
     mode: 'uncontrolled',
     initialValues: {
       name: "",
@@ -35,21 +35,32 @@ function CreatePage() {
       status: "lost"
     }
   });
+  // form is the in-memory representations of the fields
+  //Internal fields in each input/component track both UI appearance and 
+  // the underlying data that you eventually send to the backend.
 
   const navigate = useNavigate();
 
   const handleLocationSelect = (loc: Location) => {
-    form.setFieldValue('location', loc.address);
-  };
+    form.setFieldValue('location', loc.address); // setFieldValue is provided by useForm
+  }; // updates the state 
 
-  const handleSubmit = async (values: FormValues) => {
+  const handleSubmit = async (values: FormValues) => { // passes an interface object 
     try {
       const formData = new FormData();
+      // FormData is a new empty notebook to store key value pairs 
       formData.append('name', values.name);
       formData.append('description', values.description);
       formData.append('category', values.category);
-      formData.append('location', values.location);
-      formData.append('dateLost', values.dateLost);
+
+      if (values.location) {
+        formData.append('location', values.location);
+      }
+
+      if (values.dateLost){
+        formData.append('dateLost', values.dateLost);
+      }
+      
       formData.append('status', values.status);
 
       if (values.image) { // if image is provided
@@ -59,14 +70,14 @@ function CreatePage() {
       // we cannot use body: JSON.stringify(values) like usual
 
       const response = await fetch('/lost', {
-        method: 'POST',
+        method: 'POST', 
         body: formData
       });
 
       const result = await response.json();
 
       if (response.ok) {
-        navigate('/lost-items');
+        navigate('/lost');
       } else {
         console.error('Failed');
         // i was thinking of adding a toast here 
@@ -84,6 +95,7 @@ function CreatePage() {
         placeholder="Name"
         key={form.key('name')}
         {...form.getInputProps('name')}
+        // updates the form state 
       />
       <TextInput
         mt="md"
@@ -95,14 +107,16 @@ function CreatePage() {
       <FileInput
         label="Upload photo"
         placeholder="Choose an image"
-        accept="image/*"
+        accept="image/*" // limits the file type that can be selected 
         capture="environment"
+        // capture provides a hint to the mobile browswer to 
+        // directly open device camera when selecting a file
         {...form.getInputProps('image')}
-        clearable
+        clearable //  X icon that allows the user to use a 
       />
       {form.values.image && (
         <Image
-            src={URL.createObjectURL(form.values.image)}
+            src={URL.createObjectURL(form.values.image)} // presents the image URL as the actual image
             alt="Preview"
             width={150}
             height={150}
@@ -137,7 +151,9 @@ function CreatePage() {
         ]}
         {...form.getInputProps('category')}
       />
-      <AddressInput onSelect={handleLocationSelect} />
+      <AddressInput onSelect={handleLocationSelect} 
+      // onSelect takes in a function as its argument 
+      /> 
       <DateInput
         mt="md"
         label="Date Lost"
@@ -148,7 +164,7 @@ function CreatePage() {
             'dateLost',
             date ? date.toString().slice(0, 10) : ''
           )
-        }
+        } // updates the appearance of the page
         // only the date field needs an onChange unlike the others
         // where the form from mantine is already inbuilt 
         valueFormat="YYYY-MM-DD"

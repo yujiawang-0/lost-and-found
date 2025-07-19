@@ -7,9 +7,10 @@ const router = express.Router();
 
 router.get("/", getLostItems);
 router.get("/:id", getLostItemById);
-router.post("/", postLostItem);
+router.post("/", upload.single('image'), postLostItem);
 router.get("/filter", getFilteredLostItems);
 router.put("/:id", updateLostItem);
-router.delete("/:id", deleteLostItem);
+router.delete("/:id", deleteLostItem); 
+// the "/"s are relative to where they are mounted 
 
 export default router;

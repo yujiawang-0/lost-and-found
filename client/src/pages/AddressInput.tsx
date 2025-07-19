@@ -6,17 +6,19 @@ import usePlacesAutoComplete, {
 } from 'use-places-autocomplete'; // npm i --save use-places-autocomplete 
 
 // Define the type for the onSelect prop
+// funcotion must stake in one argument :
+// an object with {lat, lng, address}
 interface AddressInputProps {
   onSelect: (location: {
     lat: number;
     lng: number;
     address: string;
   }) => void;
-}
+} 
+
 
 // Define type for currentLocation state
 interface CurrentLocation {
-  label: string;
   address: string;
   lat: number;
   lng: number;
@@ -34,7 +36,8 @@ function AddressInput({ onSelect }: AddressInputProps) {
   } = usePlacesAutoComplete(); // state + helper function provider for autocomplete 
   // fields are empty at the beginning
 
-  const [currentLocation, setCurrentLocation] = useState<CurrentLocation | null>(null);
+  const [currentLocation, setCurrentLocation] = useState<CurrentLocation | null>(null); 
+  // takes the interface as the type 
 
   // detect current location 
   // useEffect(effectFunction, dependencyArray);
@@ -47,10 +50,12 @@ function AddressInput({ onSelect }: AddressInputProps) {
           const { latitude, longitude } = position.coords;
 
           const results = await getGeocode({ location: { lat: latitude, lng: longitude } });
+          // location is like the key, the lat and lng are part of the object that is a value
+
           const address = results[0]?.formatted_address || ''; // format geocode as string address
 
           setCurrentLocation({
-            label: `${address}`, address,
+            address: address,
             lat: latitude,
             lng: longitude,
             isCurrentLocation: true
@@ -62,7 +67,8 @@ function AddressInput({ onSelect }: AddressInputProps) {
 
   const handleSelect = async (suggestion: any) => { // the option that the user selected, 
     // one of the objects from combinedSuggestions list 
-    if (suggestion.isCurrentLocation) {
+
+    if (suggestion.isCurrentLocation) { 
       setValue(suggestion.address, false);
       onSelect({
         lat: suggestion.lat,
@@ -73,6 +79,7 @@ function AddressInput({ onSelect }: AddressInputProps) {
       setValue(suggestion.description, false);
       const results = await getGeocode({ placeId: suggestion.place_id });
       // place_id comes directly from google's places autocomplete api response 
+      
       const { lat, lng } = getLatLng(results[0]);
       onSelect({
         lat, lng, address: suggestion.description
@@ -85,6 +92,7 @@ function AddressInput({ onSelect }: AddressInputProps) {
     ...(currentLocation ? [currentLocation] : []),
     ...data
   ]; // adds the current location in front of the generated suggestions list 
+  // current location and the other suggestions have different types
 
   return (
     // user starts typing in input 
@@ -97,13 +105,20 @@ function AddressInput({ onSelect }: AddressInputProps) {
         disabled={!ready}
       />
       {status === 'OK' && (
-        <ul>
+        <ul
+        //stands for unordered list 
+        >
           {combinedSuggestions.map((s, idx) => (
             <li 
                 key={idx} 
-                style={{ cursor: 'pointer', padding:'4px 8px'}}
+                style={{ cursor: 'pointer', padding:'4px 8px'
+                  // padding gives contnet a bit of spacing
+                }}
                 onClick={() => handleSelect(s)}>
-              {s.isCurrentLocation ? s.label : s.description}
+              {s.isCurrentLocation ? s.address : s.description
+              // if it is a google API suggestion object 
+              // it will not have a isCurrentLocation property
+              }
             </li>
           ))}
         </ul>
