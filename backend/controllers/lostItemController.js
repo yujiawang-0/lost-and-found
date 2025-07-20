@@ -39,6 +39,14 @@ export const getFilteredLostItems = async (req, res) => {
     }
 }
 
+export const getLostLocations = async (req, res) => {
+    try {
+        const locations = await Item.distinct('location', {status:'lost'});
+        res.status(200).json({success: true, data: locations});
+    } catch (error) {
+        res.status(500).json({success: false, message: "Server Error"});
+    }
+}
 
 export const postLostItem = async (req, res) => {
     const item = req.body; // multer parse text fields into body
