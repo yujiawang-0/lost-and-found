@@ -1,41 +1,64 @@
 import { AppShell, Burger } from '@mantine/core';
 import { Header } from '../components/Header/Header';
-import { Navbar } from '../components/Navbar/Navbar';
+import { toast, Toaster } from 'react-hot-toast'
+import RateLimitedUI from '../components/RateLimitedUI';
+import { Turtle } from "lucide-react";
+
 
 import { useDisclosure } from '@mantine/hooks';
+import {useState, useEffect} from 'react';
   
 
 export default function HomePage() {
     const [opened, { toggle }] = useDisclosure();
+    const [ isRateLimited, setIsRateLimited ] = useState(true)
+    
+    // TODO: remember to make this toast longer, currently it looks quite ugly
+    useEffect(() => {
+      if (isRateLimited) {
+        //toast.custom(RateLimitedUI())
+        toast((t) => (
+          <span>
+            {RateLimitedUI()}
+            <button onClick={() => toast.dismiss(t.id)}>Dismiss</button>
+          </span>
+          ),
+          {
+            icon: <Turtle />,
+          }
+        )
+      }
+    } , [isRateLimited]);
+
+    
     return (
-    <AppShell
-      header={{ height: 56 }}
-      navbar={{
-        width: 96,
-        breakpoint: 'sm',
-        collapsed: { mobile: !opened },
-      }}
-      padding="md"
-    >
-      <AppShell.Header>
-        {/* <Burger
-          opened={opened}
-          onClick={toggle}
-          hiddenFrom="sm"
-          size="sm"
-        /> */}
-        <Header />
-      </AppShell.Header>
+    <>
+      <Toaster
+        position="top-center"
+        reverseOrder={false}
+      />
+      
+      <AppShell
+        header={{ height: 56 }}
+        padding="md"
+      >
+        <AppShell.Header>
+          <Burger
+            opened={opened}
+            onClick={toggle}
+            hiddenFrom="sm"
+            size="sm"
+          />
+          <Header />
+        </AppShell.Header>
 
-      <AppShell.Navbar p="md">
-        <Navbar />
-      </AppShell.Navbar>
 
-      <AppShell.Main>
+        <AppShell.Main>
 
-      </AppShell.Main>
+        </AppShell.Main>
 
-    </AppShell>
+      </AppShell>
+    </>
     )
 };
 
