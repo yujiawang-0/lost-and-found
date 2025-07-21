@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useForm } from '@mantine/form';
 import {TextInput, Button, Group, Select, FileInput} from '@mantine/core';
 import { DateInput } from '@mantine/dates';
-import AddressInput from './addressInput';
+import AddressInput from './AddressInput';
 import { useNavigate } from 'react-router';
 
 

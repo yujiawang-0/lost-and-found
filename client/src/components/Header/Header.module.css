@@ -28,3 +28,7 @@
     background-color: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-6));
   }
 }
+
+.search {
+  width: 300px; /* or any value like 100%, 25rem, etc */
+}

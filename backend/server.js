@@ -14,6 +14,7 @@ const PORT = process.env.PORT || 8081;
 //middleware -- function that occurs in the middle between the request and the response
 app.use(express.json()); // this middleware will parse the json bodies: requ.body
 
+// rate limiting
 app.use(rateLimiter);
 
 // our simple custom middleware: console log for api use
@@ -24,7 +25,7 @@ app.use((req, res, next) => {
 
 // authentication check middleware to be added here
 
-// rate limiting
+
 
 
 
