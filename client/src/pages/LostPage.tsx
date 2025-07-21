@@ -13,7 +13,7 @@ interface Post {
     createdAt: string;
 }
 
-const LostPage = async () => {
+const LostPage = () => {
     // create an array of Posts
     const [posts, setPosts] = useState<Post[]>([]);
     const [filters, setFilters] = useState({
@@ -97,7 +97,7 @@ const LostPage = async () => {
                 label= "Filter by location"
                 placeholder= "Start typing a location"
                 value= {filters.location}
-                onChange={(value) => setFilters((prev) => ({...prev, locatoin: value}))}
+                onChange={(value) => setFilters((prev) => ({...prev, location: value}))}
                 data= {locationOptions} // dynamic options locaded from bakend
                 clearable
                 mb = "sm"

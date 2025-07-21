@@ -10,7 +10,7 @@ router.get("/", getLostItems);
 router.get("/:id", getLostItemById);
 router.post("/", upload.single('image'), postLostItem);
 router.get("/filter", getFilteredLostItems);
-router.get("/location", getLostLocations);
+router.get("/locations", getLostLocations);
 router.put("/:id", updateLostItem);
 router.delete("/:id", deleteLostItem); 
 // the "/"s are relative to where they are mounted 
