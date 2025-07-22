@@ -1,8 +1,6 @@
 import Item from '../models/item.model.js';
-import multer from 'multer';
 import mongoose from 'mongoose';
 
-const upload = multer({dest: 'uploads/'}); // must be spelt as dest
 
 export const getLostItems = async (req, res) => {
     //res.status(200).send("you just fetched lost items");

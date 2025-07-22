@@ -2,6 +2,8 @@ import express from 'express';
 import {getLostItems, getLostItemById, postLostItem, getFilteredLostItems,
      updateLostItem, deleteLostItem, 
      getLostLocations} from '../controllers/lostItemController.js';
+import multer from 'multer';
+const upload = multer({ dest: 'uploads/' });
 
 
 const router = express.Router();
