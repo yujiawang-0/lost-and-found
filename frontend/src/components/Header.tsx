@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { IconChevronDown, IconHeart, IconStar, IconMessage, IconSettings, IconSwitchHorizontal, IconLogout, IconPlayerPause, IconTrash } from '@tabler/icons-react';
 import cx from 'clsx';
 import {
   Avatar,
