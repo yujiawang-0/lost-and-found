@@ -1,14 +1,24 @@
 {
-  "name": "frontend",
-  "private": true,
-  "version": "0.0.0",
-  "type": "module",
+  "name": "lost-and-found",
+  "version": "1.0.0",
+  "description": "lost and found web page",
+  "main": "index.js",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "lint": "eslint .",
-    "preview": "vite preview"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon backend/server.js"
   },
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yujiawang-0/lost-and-found.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/yujiawang-0/lost-and-found/issues"
+  },
+  "homepage": "https://github.com/yujiawang-0/lost-and-found#readme",
   "dependencies": {
     "@mantine/carousel": "^8.1.3",
     "@mantine/charts": "^8.1.3",
@@ -28,27 +38,20 @@
     "@tiptap/react": "^3.0.1",
     "@tiptap/starter-kit": "^3.0.1",
     "dayjs": "^1.11.13",
+    "dotenv": "^16.5.0",
     "embla-carousel": "^8.6.0",
     "embla-carousel-react": "^8.6.0",
-    "lucide-react": "^0.525.0",
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0",
-    "react-hot-toast": "^2.5.2",
-    "react-router": "^7.6.3",
-    "recharts": "^2.15.4"
+    "express": "^5.1.0",
+    "mongoose": "^8.15.1",
+    "recharts": "^2.15.4",
+    "use-places-autocomplete": "^4.0.1"
   },
   "devDependencies": {
-    "@eslint/js": "^9.30.1",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
-    "@vitejs/plugin-react": "^4.6.0",
-    "eslint": "^9.30.1",
-    "eslint-plugin-react-hooks": "^5.2.0",
-    "eslint-plugin-react-refresh": "^0.4.20",
-    "globals": "^16.3.0",
+    "nodemon": "^3.1.10",
     "postcss": "^8.5.6",
     "postcss-preset-mantine": "^1.18.0",
-    "postcss-simple-vars": "^7.0.1",
-    "vite": "^7.0.4"
+    "postcss-simple-vars": "^7.0.1"
   }
 }
