@@ -1,11 +1,12 @@
 import dotenv from "dotenv";
 dotenv.config();
-
+import cors from 'cors'
 import express from 'express';
 import { connectDB } from './config/db.js';
 import foundItemRoute from "./routes/foundItemRoute.js";
 import lostItemRoute from "./routes/lostItemRoute.js";
 import rateLimiter from "./middleware/rateLimiter.js"
+
 
 const app = express();
 const PORT = process.env.PORT || 8081;
@@ -13,6 +14,11 @@ const PORT = process.env.PORT || 8081;
 
 //middleware -- function that occurs in the middle between the request and the response
 app.use(express.json()); // this middleware will parse the json bodies: requ.body
+
+//CORS
+app.use(cors({
+    origin:"http://localhost:5173"
+}));
 
 // rate limiting
 app.use(rateLimiter);
