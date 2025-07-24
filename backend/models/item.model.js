@@ -38,7 +38,7 @@ const itemSchema = new mongoose.Schema({
             'Household Items', 
             'Others'
         ],
-        required: false,
+        required: true,
     },
     status: {
         type: String, 

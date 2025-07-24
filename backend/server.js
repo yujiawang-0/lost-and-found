@@ -36,6 +36,7 @@ app.use((req, res, next) => {
 
 
 app.use("/lost", lostItemRoute);
+// take all the routes defined in lostItemRoute and mount them at the path /lost
 app.use("/found", foundItemRoute);
 
 app.get("/", (req, res) => {
