@@ -1,9 +1,6 @@
 import { AppShell, Burger } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { Header } from '../components/Header/HeaderOld';
-import { HeaderSimple } from '../components/NewHeader/HeaderSimple';
 import { Outlet } from 'react-router';
-import RateLimitedUI from '../components/RateLimitedPage/RateLimitedUI';
 
 import { useState, useEffect } from 'react';
 import { DoubleHeader } from '../components/Header/Header';

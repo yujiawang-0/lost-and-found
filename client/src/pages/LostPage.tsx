@@ -1,6 +1,11 @@
-import {Card, Image, Text, Stack, Autocomplete, Select,Button} from '@mantine/core';
+import {Card, Image, Text, Stack, Autocomplete, Select, Button, Group, SimpleGrid} from '@mantine/core';
 import { DateInput } from '@mantine/dates';
 import React, {useEffect, useState} from 'react';
+import axios from 'axios';
+import toast from 'react-hot-toast';
+import RateLimitedUI from '../components/RateLimitedPage/RateLimitedUI';
+import { ItemCard } from '../components/ItemCard/ItemCard';
+
 
 interface Post {
     _id: string;
@@ -14,57 +19,84 @@ interface Post {
 }
 
 const LostPage = () => {
+    // create an array of Posts
+    const [posts, setPosts] = useState<Post[]>([]);
+    const [filters, setFilters] = useState({
+        category: '', 
+        location: '',
+        dateLost: ''
+    }); // creates an object with three fields
+
+    const [locationOptions, setLocationOptions] = useState<string[]>([]);
+    
+    // creates an array of string to store the locations
+
     const [isRateLimited, setIsRateLimited] = useState(false)
     const [lostItems, setLostItems] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        const getLostItems = async () => {
-            try {
-                const res = await axios.get('http://localhost:8080/lost')
-                console.log(res.data);
-                setLostItems(res.data);
-                setIsRateLimited(false);
-            } catch (error) {
-                console.log("Error in fetching lost items");
-                if(error.response?.status === 429) {
-                    setIsRateLimited(true);
-                } else {
-                    toast.error("Failed to load lost items...")
-                }
-            } finally {
-                setLoading(false);
+    
+    const fetchPosts = async (activeFilters: { category?: string; location?: string; dateLost?: string } = {}) => {
+        try {
+            const params = new URLSearchParams();
+
+            if (activeFilters.category) params.append('category', activeFilters.category);
+            if (activeFilters.location) params.append('location', activeFilters.location);
+            if (activeFilters.dateLost) params.append('dateLost', activeFilters.dateLost);
+
+            const query = params.toString() ? `?${params.toString()}` : '';
+            const response = await axios.get(`http://localhost:8080/lost/filter${query}`);
+
+            console.log("Fetched /lost/filter result:", response.data);
+
+            if (response.data.success) {
+            setPosts(response.data.data);
+            } else {
+            toast.error('Failed to fetch filtered posts');
             }
+        } catch (error: any) {
+            console.error('Error fetching posts:', error);
+            if (error.response?.status === 429) {
+            setIsRateLimited(true);
+            } else {
+            toast.error('Failed to load lost items...');
+            }
+        } finally {
+            setLoading(false);
         }
-
-        getLostItems();
-    }, []);
-
-
-    return (<div>
-        {isRateLimited && <RateLimitedUI />}
-        
-        <div>
-            {loading && <Center>Loading lost items...</Center>}
-
-        if (json.success) {
-            setLocationOptions(json.data); // stores all the locations at that page
-        }
-    }; 
-
-    useEffect( () => {
-        fetchPosts();
-        fetchLocations();
-    }, []);
-
-    const formatDate = (isoString : string) => {
-        const date  = new Date(isoString);
-        return date.toLocaleDateString(undefined, {year: 'numeric', month: 'long', day: 'numeric'});
     };
 
+
+    const fetchLocations = async () => {
+        try {
+            const response = await axios.get('http://localhost:8080/lost/locations');
+            if (response.data.success) {
+            const formatted = response.data.data.map((loc: string) => ({
+                value: loc,
+                label: loc,
+            }));
+            setLocationOptions(formatted); // ← now it has .value and .label
+            } else {
+            toast.error('Failed to fetch locations');
+            }
+        } catch (error) {
+            console.error('Error fetching locations:', error);
+            toast.error('Failed to load locations');
+        }
+    };
+
+
+    useEffect(() => {
+        fetchPosts();
+        fetchLocations();
+        }, []);
+
+
     return (
-        <div style={{maxWidth: 600, margin: '0 auto', padding: '1rem'}}>
-            <Select 
+        <div >
+            {isRateLimited && <RateLimitedUI />}
+            <Group justify='space-between'>
+                <Select 
                 label= "Filter by category"
                 placeholder= "Select category"
                 value= {filters.category} // binds value of input to filters.category state
@@ -93,6 +125,7 @@ const LostPage = () => {
                 clearable // give them the option to  not have any category filters
                 mb= "sm"
             /> 
+            
             <Autocomplete 
                 label= "Filter by location"
                 placeholder= "Start typing a location"
@@ -104,7 +137,7 @@ const LostPage = () => {
             />
 
             <DateInput
-                label= "Filter by date lost"
+                label= "Filter by date lost"                
                 placeholder = "Pick date"
                 value= {filters.dateLost ? new Date(filters.dateLost): null}
                 onChange= {(date) =>
@@ -118,43 +151,30 @@ const LostPage = () => {
             />
 
             <Button 
-                fullWidth variant= "light" 
+                variant= "light" 
                 onClick={() => fetchPosts(filters)}
                 // updated filters state will be passed to the fetchPosts 
                 // to get relevant posts
                 // once the button is clicked 
-                mb="md">
+                mb="sm">
                 Apply Filters
             </Button>
-
-            <Stack gap="md">
+            </Group>
+            
+            <SimpleGrid 
+            cols={{ base: 1, sm: 2, lg: 3 }}
+            spacing={{ base: 10, sm: 'xl' }}
+            verticalSpacing={{ base: 'md', sm: 'xl' }}  
+            >
                 {posts.map((post) => (
-                    <Card key= {post._id} shadow= "sm" padding="lg" withBorder>
-                        {post.image && (
-                            <Card.Section mb="sm">
-                                <Image src={`/uploads/${post.image}`} alt = {post.name} 
-                                // alt is included in case the image cant load 
-                                />
-                            </Card.Section>
-                        )}
-
-                        <Text fw={500}>{post.name}</Text>
-
-                        <Text size= "sm" c="dimmed">
-                            Lost on: {formatDate(post.dateLost)}
-                        </Text>
-
-                        <Text>
-                            Posted on: {formatDate(post.createdAt)}
-                        </Text>
-
-                        <Text size="sm">{post.description}</Text>
-                    </Card>
+                    <ItemCard key={post._id} item={post} />
                 ))}
-            </Stack>
+            </SimpleGrid>
         </div>
-
-    </div>);
+    )
+  
 };
 
 export default LostPage;
+
+

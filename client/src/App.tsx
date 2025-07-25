@@ -23,7 +23,7 @@ export default function App() {
             <Route path="/lost" element={<LostPage />} />
             <Route path="/found" element={<FoundPage />} />
             <Route path="/create" element={<CreatePage />} />
-            <Route path="/found/:id" element={<ItemDetailPage />} />
+            <Route path="/lost/:id" element={<ItemDetailPage />} />
             <Route path="/found/:id" element={<ItemDetailPage />} />
             <Route path="/settings" element={<SettingsPage />} />
           </Route>
