@@ -1,19 +1,17 @@
 import '@mantine/core/styles.css'
+import '@mantine/dates/styles.css';
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.jsx'
 import { BrowserRouter } from 'react-router';
-import {MantineProvider , createTheme } from '@mantine/core'
+import {MantineProvider  } from '@mantine/core'
 
-const theme = createTheme({
-  /** Your theme override here */
-});
 
 
 createRoot(document.getElementById('root') as HTMLElement).render(
   <StrictMode>
-    <MantineProvider theme={theme} > 
+    <MantineProvider > 
       <BrowserRouter>
         <App />
       </BrowserRouter>

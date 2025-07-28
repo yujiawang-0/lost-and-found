@@ -4,7 +4,9 @@ import { useForm } from '@mantine/form';
 import { TextInput, Button, Group, Select, FileInput, Image } from '@mantine/core';
 import { DateInput } from '@mantine/dates';
 import AddressInput from './AddressInput';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
+import toast from 'react-hot-toast';
+import axios from 'axios';
 
 interface FormValues {
   name: string;
@@ -36,7 +38,7 @@ function CreatePage() {
     }
   });
   // form is the in-memory representations of the fields
-  //Internal fields in each input/component track both UI appearance and 
+  // Internal fields in each input/component track both UI appearance and 
   // the underlying data that you eventually send to the backend.
 
   const navigate = useNavigate();
@@ -69,24 +71,46 @@ function CreatePage() {
       // chat told me that to include images the user uploaded
       // we cannot use body: JSON.stringify(values) like usual
 
-      const response = await fetch('/lost', {
-        method: 'POST', 
-        body: formData
-      });
+      const response = await axios.post('http://localhost:8080/lost', formData, 
+      //   {
+      //   headers: {
+      //     'Content-Type': 'multipart/form-data',
+      //   },
+      // }
+      );
 
-      const result = await response.json();
-
-      if (response.ok) {
-        navigate('/lost');
-      } else {
-        console.error('Failed');
-        // i was thinking of adding a toast here 
-        // to tell the user she/he cannot submit item
-      }
-    } catch (err) {
-      console.error('error:', err);
+    if (response.status === 201) {
+      navigate('/lost');
+    } else {
+      console.error('Upload failed:', response.data);
+      toast.error('Failed to add a new item');
     }
-  };
+  } catch (err: any) {
+    console.error('Upload error:', err);
+    toast.error('Something went wrong during submission');
+  }
+};
+
+
+  //     const response = await fetch('/lost', {
+  //       method: 'POST', 
+  //       body: formData
+  //     });
+
+  //     const result = await response.json();
+
+  //     if (response.ok) {
+  //       navigate('/lost');
+  //     } else {
+  //       console.error('Failed');
+  //       toast.error('Failed to add a new item');
+  //       // i was thinking of adding a toast here 
+  //       // to tell the user she/he cannot submit item
+  //     }
+  //   } catch (err) {
+  //     console.error('error:', err);
+  //   }
+  // };
 
   return (
     <div>

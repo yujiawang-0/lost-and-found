@@ -1,51 +1,214 @@
-import { Search, BadgeQuestionMark} from "lucide-react"
-import { Autocomplete, Burger, Group } from '@mantine/core';
+import { 
+  Search, 
+  BadgeQuestionMark,
+  Sun, 
+  Moon,
+  CircleOff,
+  ChevronDown,
+  Settings,
+  MessageSquareMore,
+  CircleUser, 
+  LogOut,
+  Flag,
+  Plus
+
+} from "lucide-react"
+import cx from 'clsx';
+import { useState } from 'react';
+import { 
+    ActionIcon, 
+    Anchor, 
+    Autocomplete, 
+    Avatar, 
+    Box, 
+    Text,
+    Burger, 
+    Button, 
+    Container, 
+    Flex, 
+    Group, 
+    Menu, 
+    UnstyledButton, 
+    useComputedColorScheme, 
+    useMantineColorScheme, 
+    useMantineTheme } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 
-import classes from './Header.module.css';
+import classes from './DoubleHeader.module.css';
+import lighting from './ActionToggle.module.css';
+import { Link } from "react-router";
 
-const links = [
-  { link: '/about', label: 'Features' },
-  { link: '/pricing', label: 'Pricing' },
-  { link: '/learn', label: 'Learn' },
-  { link: '/community', label: 'Community' },
+const mainLinks = [
+  { link: '/lost', label: 'Lost' },
+  { link: '/found', label: 'Found' },
 ];
 
-export function Header() {
-  const [opened, { toggle }] = useDisclosure(false);
+const user = {
+  name: 'Jane Spoonfighter',
+  email: 'janspoon@fighter.dev',
+  image: 'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-5.png',
+};
 
-  const items = links.map((link) => (
-    <a
-      key={link.label}
-      href={link.link}
-      className={classes.link}
-      onClick={(event) => event.preventDefault()}
+
+export function DoubleHeader() {
+    const [opened, { toggle }] = useDisclosure(false);
+    const [active, setActive] = useState(0);
+    const [userMenuOpened, setUserMenuOpened] = useState(false);
+
+    const theme = useMantineTheme();
+      const { colorScheme, setColorScheme } = useMantineColorScheme();
+      const computedColorScheme = useComputedColorScheme('light');
+      const toggleColorScheme = () => {
+        setColorScheme(computedColorScheme === 'dark' ? 'light' : 'dark');
+      };
+
+
+  const mainItems = mainLinks.map((item, index) => (
+    <Anchor<'a'>
+      href={item.link}
+      key={item.label}
+      className={classes.mainLink}
+      data-active={index === active || undefined}
+      onClick={(event) => {
+        // event.preventDefault();
+        setActive(index);
+      }}
     >
-      {link.label}
-    </a>
+      {item.label}
+    </Anchor>
   ));
 
   return (
     <header className={classes.header}>
-      <div className={classes.inner}>
-        <Group>
-            <Burger opened={opened} onClick={toggle} size="sm" hiddenFrom="sm" />
-            <BadgeQuestionMark size={28} />
-        </Group>
-        
-        <Group>
-          <Group ml={50} gap={5} className={classes.links} visibleFrom="sm">
-            {items}
-          </Group>
+        {/* top row */}
+        <Flex className={classes.topRow}>
+            <Group>
+                <BadgeQuestionMark size={28} />
+                <Box visibleFrom="md">
+                    <h2>Lost & Found</h2>
+                </Box>
+            </Group>
+
+            <Group className={classes.mainLinks}>
+                {mainItems}
+            </Group>
+            
+
+            <Group> 
+                {/* create button for small screen */}
+                <Box hiddenFrom="sm">
+                    <Link to={"/create"}> 
+                        <Button variant='filled' >
+                            <Plus size="16"/>
+                        </Button>
+                    </Link>
+                </Box>
+
+                {/* create button for larger screen */}
+                <Box visibleFrom="sm">
+                    <Link to={"/create"}> 
+                        <Button variant='filled' leftSection={<Plus size="16"/>} >
+                            <Text fw={500} size="sm" lh={1} mr={3}>
+                                Add Item
+                            </Text>
+                        </Button>
+                    </Link>
+                </Box>
+                
+                <Group visibleFrom="sm">
+                <ActionIcon
+                    onClick={() => toggleColorScheme()}
+                    variant="default"
+                    size="xl"
+                    radius="md"
+                    aria-label="Toggle color scheme"
+                >
+                    <Sun className={cx(lighting.icon, lighting.light)} />
+                    <Moon className={cx(lighting.icon, lighting.dark)} />
+                </ActionIcon>
+                
+                <Button variant="subtle" size="sm" visibleFrom="xs">
+                    <MessageSquareMore size={18} />
+                </Button>
+                
+                <Menu
+                    width={260}
+                    position="bottom-end"
+                    transitionProps={{ transition: 'pop-top-right' }}
+                    onClose={() => setUserMenuOpened(false)}
+                    onOpen={() => setUserMenuOpened(true)}
+                    withinPortal
+                >
+                    <Menu.Target>
+                    <UnstyledButton
+                        className={cx(classes.user, { [classes.userActive]: userMenuOpened })}
+                    >
+                        <Group gap={7}>
+                        <Avatar src={user.image} alt={user.name} radius="xl" size={20} />
+                        <Text fw={500} size="sm" lh={1} mr={3} visibleFrom="md">
+                            {user.name}
+                        </Text>
+                        <ChevronDown size={12} />
+                        </Group>
+                    </UnstyledButton>
+                    </Menu.Target>
+                    <Menu.Dropdown>
+                    <Menu.Item
+                        leftSection={<Flag size={16} color={theme.colors.red[6]} />}
+                    >
+                        Your noticed
+                    </Menu.Item>
+                    <Menu.Item
+                        leftSection={<MessageSquareMore size={16} color={theme.colors.blue[6]} />}
+                    >
+                        Your chats
+                    </Menu.Item>
+
+                    <Menu.Label>Settings</Menu.Label>
+                    <Menu.Item leftSection={<Settings size={16} />}>
+                        Account settings
+                    </Menu.Item>
+                    <Menu.Item leftSection={<LogOut size={16} />}>Logout</Menu.Item>
+
+                    <Menu.Divider />
+                    <Menu.Item color="red" leftSection={<CircleOff size={16} />}>
+                        Delete account
+                    </Menu.Item>
+                    </Menu.Dropdown>
+                </Menu>
+
+            </Group>
+            </Group>
+
+            <Burger
+                opened={opened}
+                onClick={toggle}
+                size="sm"
+                hiddenFrom="sm"
+            />
+
+        </Flex>
+
+        {/* bottom row */}
+        <Box className={classes.searchRow}>
+        <Container>
           <Autocomplete
             className={classes.search}
             placeholder="Search"
-            leftSection={<Search size={16}  />}
-            data={['item1', 'item2', 'item3', 'item4', 'item5', 'item6', 'item7']}
-            visibleFrom="xs"
+            leftSection={<Search size={16} />}
+            data={[
+              "item1",
+              "item2",
+              "item3",
+              "item4",
+              "item5",
+              "item6",
+              "item7"
+            ]}
           />
-        </Group>
-      </div>
+        </Container>
+      </Box>
+
     </header>
   );
 }

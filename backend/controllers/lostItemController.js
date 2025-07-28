@@ -37,14 +37,35 @@ export const getFilteredLostItems = async (req, res) => {
     }
 }
 
+// export const getLostLocations = async (req, res) => {
+//     try {
+//         const locations = await Item.distinct('location', {status:'lost'});
+//         res.status(200).json({success: true, data: locations});
+//     } catch (error) {
+//         res.status(500).json({success: false, message: "Server Error"});
+//     }
+// }
+
 export const getLostLocations = async (req, res) => {
     try {
-        const locations = await Item.distinct('location', {status:'lost'});
-        res.status(200).json({success: true, data: locations});
-    } catch (error) {
-        res.status(500).json({success: false, message: "Server Error"});
+        const locations = await Item.find({ status: 'lost' }).select('location -_id');
+
+        // if locations are objects, extract their address strings
+        const locationStrings = locations
+        .map(item => {
+            if (typeof item.location === 'string') return item.location;
+            if (item.location?.address) return item.location.address;
+            return null;
+        })
+        .filter(Boolean); // remove nulls
+
+        const unique = [...new Set(locationStrings)];
+
+        res.status(200).json({ success: true, data: unique });
+    } catch (err) {
+        res.status(500).json({ success: false, message: 'Server error' });
     }
-}
+};
 
 export const postLostItem = async (req, res) => {
     const item = req.body; // multer parse text fields into body
