@@ -91,6 +91,9 @@ const LostPage = () => {
         fetchLocations();
         }, []);
 
+    
+    console.log("Rendering posts:", posts.map(p => p.createdAt));
+
 
     return (
         <div >
@@ -167,6 +170,7 @@ const LostPage = () => {
             verticalSpacing={{ base: 'md', sm: 'xl' }}  
             >
                 {posts.map((post) => (
+                    
                     <ItemCard key={post._id} item={post} />
                 ))}
             </SimpleGrid>

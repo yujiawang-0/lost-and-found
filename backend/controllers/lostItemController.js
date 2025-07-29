@@ -29,7 +29,7 @@ export const getLostItemById = async (req, res) => {
 export const getFilteredLostItems = async (req, res) => {
     try {
         const query = {status: 'lost', ...req.query}; 
-        const items = await Item.find(query);
+        const items = await Item.find(query).sort({ createdAt: -1 });
         res.status(200).json({success: true, data: items});
         // here are the items u asked for, and the request worked 
     } catch (error) {

@@ -1,11 +1,12 @@
 // import { IconHeart } from '@tabler/icons-react';
-import { ActionIcon, Badge, Button, Card, Group, Image, Text } from '@mantine/core';
+import { ActionIcon, Badge, Button, Card, Group, Image, Text, NavLink } from '@mantine/core';
 import classes from './BadgeCard.module.css';
 import {
     Trash,
     SquarePen,
 } from "lucide-react"
-import { Link } from 'react-router';
+import { href, Link,  } from 'react-router';
+import { formatDate } from '../../lib/utils';
 
 // const mockdata = {
 //   image:
@@ -35,16 +36,13 @@ export function ItemCard({item}) {
 //     </Badge>
 //   ));
 
-    const formatDate = (isoString : string) => {
-        const date  = new Date(isoString);
-        return date.toLocaleDateString(undefined, {year: 'numeric', month: 'long', day: 'numeric'});
-    };
 
     const { image, name, description, createdAt, dateLost } = item;
 
-  return (
-    <Link to={`/lost/${item._id}`}> 
+  return ( 
         <Card 
+            component={Link}
+            to={`/lost/${item._id}`}
             withBorder 
             radius="md" 
             p="md" 
@@ -68,31 +66,23 @@ export function ItemCard({item}) {
             </Text>
         </Card.Section>
 
-        {/* <Card.Section className={classes.section}>
-            <Text mt="md" className={classes.label} c="dimmed">
-            Perfect for you, if you enjoy
-            </Text>
-            <Group gap={7} mt={5}>
-            {features}
-            </Group>
-        </Card.Section> */}
-
-        <Group mt="xs">
+        <Group mt="xs" justify='space-between'>
             <Text size= "sm" c="dimmed">
                 Lost on: {formatDate(dateLost)}
             </Text>
-            <Text size= "sm" c="dimmed">
+            {/* <Text size= "sm" c="dimmed">
                 Posted on: {formatDate(createdAt)}
-            </Text>
-            <ActionIcon variant="default" radius="md" size={36}>
-                <SquarePen className={classes.like} />
-            </ActionIcon>
-            <ActionIcon variant="default" radius="md" size={36}>
-                <Trash className={classes.like} />
-            </ActionIcon>
+            </Text> */}
+            <Group justify='flex-end'>
+                <ActionIcon variant="default" radius="md" size={36}>
+                    <SquarePen className={classes.like} />
+                </ActionIcon>
+                <ActionIcon variant="default" radius="md" size={36}>
+                    <Trash className={classes.like} />
+                </ActionIcon>
+            </Group>
         </Group>
         </Card>
-    </Link>
   );
 }
 

@@ -5,7 +5,7 @@ import LostPage from './pages/LostPage';
 import FoundPage from './pages/FoundPage';
 import ItemDetailPage from './pages/ItemDetailPage';
 import SettingsPage from './pages/SettingsPage';
-import CreatePage from './pages/CreatePage';
+import CreatePage from './pages/CreatePage/CreatePage';
 import MainLayout from './pages/MainLayout';
 import { Toaster } from 'react-hot-toast';
 
