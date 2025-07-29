@@ -5,8 +5,10 @@ import {
     Trash,
     SquarePen,
 } from "lucide-react"
-import { href, Link,  } from 'react-router';
+import { Link,  } from 'react-router';
 import { formatDate } from '../../lib/utils';
+import axiosInstance from '../../lib/axios';
+import toast from 'react-hot-toast';
 
 // const mockdata = {
 //   image:
@@ -28,7 +30,7 @@ import { formatDate } from '../../lib/utils';
 
 
 
-export function ItemCard({item}) {
+export function ItemCard({item, setLostItems}) {
 //   const { image, title, description, country, badges } = mockdata;
 //   const features = badges.map((badge) => (
 //     <Badge variant="light" key={badge.label} leftSection={badge.emoji}>
@@ -39,7 +41,25 @@ export function ItemCard({item}) {
 
     const { image, name, description, createdAt, dateLost } = item;
 
-  return ( 
+    const handleDelete = async (e, id) => {
+        e.preventDefault(); // get rid of the navigation behaviour of the whole card
+
+        if (!window.confirm("Are you sure you want to delete this item?")) return; 
+        // can use mantine modal instead.
+
+        try {
+            await axiosInstance.delete(`/lost/${id}`)
+            setLostItems((prev) => prev.filter(item => item._id !== id)) 
+            // get rid of the deleted one
+            toast.success("Item deleted successfully")
+        } catch (error) {
+            console.log("Error in handleDelete", error);
+            toast.error("Failed to delete item")
+        }
+    }
+
+
+    return ( 
         <Card 
             component={Link}
             to={`/lost/${item._id}`}
@@ -77,7 +97,12 @@ export function ItemCard({item}) {
                 <ActionIcon variant="default" radius="md" size={36}>
                     <SquarePen className={classes.like} />
                 </ActionIcon>
-                <ActionIcon variant="default" radius="md" size={36}>
+                <ActionIcon 
+                    variant="default" 
+                    radius="md" 
+                    size={36}
+                    onClick={(e) => handleDelete(e, item._id)}
+                    >
                     <Trash className={classes.like} />
                 </ActionIcon>
             </Group>
@@ -88,24 +113,3 @@ export function ItemCard({item}) {
 
 
 
-{/* <Card key= {post._id} shadow= "sm" padding="lg" withBorder>
-                        {post.image && (
-                            <Card.Section mb="sm">
-                                <Image src={`/uploads/${post.image}`} alt = {post.name} 
-                                // alt is included in case the image cant load 
-                                />
-                            </Card.Section>
-                        )}
-
-                        <Text fw={500}>{post.name}</Text>
-
-                        <Text size= "sm" c="dimmed">
-                            Lost on: {formatDate(post.dateLost)}
-                        </Text>
-
-                        <Text>
-                            Posted on: {formatDate(post.createdAt)}
-                        </Text>
-
-                        <Text size="sm">{post.description}</Text>
-                    </Card> */}

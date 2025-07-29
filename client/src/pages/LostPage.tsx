@@ -1,10 +1,13 @@
-import {Card, Image, Text, Stack, Autocomplete, Select, Button, Group, SimpleGrid} from '@mantine/core';
+import {Card, Image, Text, Stack, Autocomplete, Select, Button, Group, SimpleGrid, Grid} from '@mantine/core';
 import { DateInput } from '@mantine/dates';
 import React, {useEffect, useState} from 'react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
+import classes from './CreatePage/ContainedInput.module.css'
 import RateLimitedUI from '../components/RateLimitedPage/RateLimitedUI';
 import { ItemCard } from '../components/ItemCard/ItemCard';
+import axiosInstance from '../lib/axios';
+import { LostItemsNotFound } from '../components/LostItemsNotFound/LostItemsNotFound';
 
 
 interface Post {
@@ -32,11 +35,11 @@ const LostPage = () => {
     // creates an array of string to store the locations
 
     const [isRateLimited, setIsRateLimited] = useState(false)
-    const [lostItems, setLostItems] = useState([]);
     const [loading, setLoading] = useState(true);
 
     
     const fetchPosts = async (activeFilters: { category?: string; location?: string; dateLost?: string } = {}) => {
+        setLoading(true);
         try {
             const params = new URLSearchParams();
 
@@ -69,7 +72,7 @@ const LostPage = () => {
 
     const fetchLocations = async () => {
         try {
-            const response = await axios.get('http://localhost:8080/lost/locations');
+            const response = await axiosInstance.get('/lost/locations');
             if (response.data.success) {
             const formatted = response.data.data.map((loc: string) => ({
                 value: loc,
@@ -92,88 +95,109 @@ const LostPage = () => {
         }, []);
 
     
-    console.log("Rendering posts:", posts.map(p => p.createdAt));
+    //console.log("Rendering posts:", posts.map(p => p.createdAt));
+    
+    if(isRateLimited) {
+        return <RateLimitedUI />
+    }
 
+    if (loading) {
+        return <Text ta="center">Loading Lost Items...</Text>
+    }
 
     return (
         <div >
-            {isRateLimited && <RateLimitedUI />}
-            <Group justify='space-between'>
-                <Select 
-                label= "Filter by category"
-                placeholder= "Select category"
-                value= {filters.category} // binds value of input to filters.category state
-                onChange= {(value) => setFilters((prev) => ({...prev, category:value ||''}))}
-                // React automatically passes the current value of filters state as arguemnt to the callback 
-                data= {[
-                    'Electronics', 
-                    'Wallet', 
-                    'Identification Documents', 
-                    'Keys', 
-                    'Bag', 
-                    'Stationery', 
-                    'Clothing', 
-                    'Jewellery', 
-                    'Accessories', 
-                    'Sports Equipment', 
-                    'Eyewear', 
-                    'Footwear', 
-                    'Toys', 
-                    'Pet Items',
-                    'Cash', 
-                    'Travel Documents', 
-                    'Household Items', 
-                    'Others'
-                ]}
-                clearable // give them the option to  not have any category filters
-                mb= "sm"
-            /> 
-            
-            <Autocomplete 
-                label= "Filter by location"
-                placeholder= "Start typing a location"
-                value= {filters.location}
-                onChange={(value) => setFilters((prev) => ({...prev, location: value}))}
-                data= {locationOptions} // dynamic options locaded from bakend
-                clearable
-                mb = "sm"
-            />
+            <Grid justify='center' align='center'>
+                <Grid.Col span={{ base: 12, sm: 3 }}>
+                    <Select 
+                    label= "Filter by category"
+                    placeholder= "Select category"
+                    classNames={classes}
+                    value= {filters.category} // binds value of input to filters.category state
+                    onChange= {(value) => setFilters((prev) => ({...prev, category:value ||''}))}
+                    // React automatically passes the current value of filters state as arguemnt to the callback 
+                    data= {[
+                        'Electronics', 
+                        'Wallet', 
+                        'Identification Documents', 
+                        'Keys', 
+                        'Bag', 
+                        'Stationery', 
+                        'Clothing', 
+                        'Jewellery', 
+                        'Accessories', 
+                        'Sports Equipment', 
+                        'Eyewear', 
+                        'Footwear', 
+                        'Toys', 
+                        'Pet Items',
+                        'Cash', 
+                        'Travel Documents', 
+                        'Household Items', 
+                        'Others'
+                    ]}
+                    clearable // give them the option to  not have any category filters
+                    mb= "sm"
+                    /> 
+                </Grid.Col>
 
-            <DateInput
-                label= "Filter by date lost"                
-                placeholder = "Pick date"
-                value= {filters.dateLost ? new Date(filters.dateLost): null}
-                onChange= {(date) =>
-                    setFilters((prev) => ({
-                        ...prev, 
-                        dateLost: date ? new Date(date).toISOString().split('T')[0] : ''
-                    }))
-                }
-                clearable
-                mb="sm"
-            />
+                <Grid.Col span={{ base: 12, sm: 3 }}>
+                    <Autocomplete 
+                        label= "Filter by location"
+                        placeholder= "Start typing a location"
+                        classNames={classes}
+                        value= {filters.location}
+                        onChange={(value) => setFilters((prev) => ({...prev, location: value}))}
+                        data= {locationOptions} // dynamic options locaded from bakend
+                        clearable
+                        mb = "sm"
+                    />
+                </Grid.Col>
+                
+                <Grid.Col span={{ base: 12, sm: 3 }}>
+                    <DateInput
+                        label= "Filter by date lost"                
+                        placeholder = "Pick date"
+                        classNames={classes}
+                        value= {filters.dateLost ? new Date(filters.dateLost): null}
+                        onChange= {(date) =>
+                            setFilters((prev) => ({
+                                ...prev, 
+                                dateLost: date ? new Date(date).toISOString().split('T')[0] : ''
+                            }))
+                        }
+                        clearable
+                        mb="sm"
+                    />
+                </Grid.Col>
+                
+                <Grid.Col span={{ base: 12, sm: 1 }}>
+                    <Button 
+                        variant= "light" 
+                        onClick={() => fetchPosts(filters)}
+                        // updated filters state will be passed to the fetchPosts 
+                        // to get relevant posts
+                        // once the button is clicked 
+                        mb="sm">
+                        Apply Filters
+                    </Button>
+                </Grid.Col>
+            </Grid>
+        
+            {posts.length === 0 && !isRateLimited && <LostItemsNotFound/>}
 
-            <Button 
-                variant= "light" 
-                onClick={() => fetchPosts(filters)}
-                // updated filters state will be passed to the fetchPosts 
-                // to get relevant posts
-                // once the button is clicked 
-                mb="sm">
-                Apply Filters
-            </Button>
-            </Group>
-            
+            {posts.length > 0 && !isRateLimited && (
             <SimpleGrid 
             cols={{ base: 1, sm: 2, lg: 3 }}
             spacing={{ base: 10, sm: 'xl' }}
             verticalSpacing={{ base: 'md', sm: 'xl' }}  
-            >
+            > 
                 {posts.map((post) => (
                     
-                    <ItemCard key={post._id} item={post} />
+                    <ItemCard key={post._id} item={post} setLostItems={setPosts}/>
                 ))}
             </SimpleGrid>
+            )}
         </div>
     )
   

@@ -6,10 +6,10 @@ import { DateInput } from '@mantine/dates';
 import AddressInput from '../AddressInput';
 import { useNavigate } from 'react-router';
 import toast from 'react-hot-toast';
-import axios from 'axios';
 import { useState } from 'react';
 import classes from './ContainedInput.module.css';
 import { ClockAlert } from "lucide-react"
+import axiosInstance from '../../lib/axios';
 
 interface FormValues {
   name: string;
@@ -86,7 +86,7 @@ function CreatePage() {
       // chat told me that to include images the user uploaded
       // we cannot use body: JSON.stringify(values) like usual
 
-      const response = await axios.post('http://localhost:8080/lost', formData, 
+      const response = await axiosInstance.post('/lost', formData, 
         {
         headers: {
           'Content-Type': 'multipart/form-data',
@@ -106,7 +106,7 @@ function CreatePage() {
     if (err.response.status === 429) {
       toast.error("Slow down! You are creating items too fast!",{
         duration: 4000,
-        icon: ClockAlert
+        icon: <ClockAlert/>
       });
 
     }
