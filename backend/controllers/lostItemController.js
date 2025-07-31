@@ -79,7 +79,8 @@ export const postLostItem = async (req, res) => {
 
     const newItem = new Item({
         ...item, 
-        image: file ? file.filename : null
+        image: file ? file.filename : null,
+        user: req.user.id
     }); // creates item in backend
     // follow naming in the schema 
 
@@ -90,6 +91,7 @@ export const postLostItem = async (req, res) => {
         res.status(500).json({success: false, message: "Server Error"});
     }
 }
+
 
 
 export const updateLostItem = async (req, res) => {

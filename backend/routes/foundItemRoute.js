@@ -7,7 +7,7 @@ const router = express.Router();
 
 router.get("/", getFoundItems);
 router.get("/:id", getFoundItemById);
-router.post("/", postFoundItem);
+router.post("/", upload.single('image'), postFoundItem);
 router.get("/filter", getFilteredFoundItems);
 router.put("/:id", updateFoundItem);
 router.delete("/:id", deleteFoundItem);

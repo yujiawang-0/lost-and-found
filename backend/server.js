@@ -5,7 +5,9 @@ import express from 'express';
 import { connectDB } from './config/db.js';
 import foundItemRoute from "./routes/foundItemRoute.js";
 import lostItemRoute from "./routes/lostItemRoute.js";
-import rateLimiter from "./middleware/rateLimiter.js"
+import userItemsRoute from './routes/userItemsRoute.js';
+import userRoute from './routes/userRoute.js';
+import rateLimiter from "./middleware/rateLimiter.js";
 
 
 const app = express();
@@ -38,6 +40,8 @@ app.use((req, res, next) => {
 app.use("/lost", lostItemRoute);
 // take all the routes defined in lostItemRoute and mount them at the path /lost
 app.use("/found", foundItemRoute);
+app.use("/api/auth", userRoute);
+app.use('/api/items', userItemsRoute);
 
 app.get("/", (req, res) => {
     res.send("Server is ready");
