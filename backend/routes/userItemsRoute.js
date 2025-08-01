@@ -1,19 +1,32 @@
 import express from 'express';
 import Item from '../models/item.model.js';
+import { getUserItems, getItemById, updateItem, deleteItem } from '../controllers/userItems.controller.js';
 
 const router = express.Router();
 
-router.get('/user', async (req, res) => {
-  const { email } = req.query;
+router.get('/user', getUserItems);
 
-  if (!email) return res.status(400).json({ success: false, message: 'Email required' });
+router.get(
+    '/:id', 
+    verifyGoogleToken, 
+    authorizeItemOwner, 
+    getItemById
+);
 
-  try {
-    const items = await Item.find({ email }); // assumes each item has an `email` field
-    res.status(200).json({ success: true, data: items });
-  } catch (err) {
-    res.status(500).json({ success: false, message: 'Server error' });
-  }
-}); // GET /api/items/user?email=user@email.com
+router.put(
+    '/:id',
+    verifyGoogleToken, // attaches req.user
+    authorizeItemOwner, // attaches the specific item
+    upload.single('image'),
+    updateItem
+);
+
+router.delete(
+    '/:id', 
+    verifyGoogleToken, 
+    authorizeItemOwner, 
+    upload.single('image'),
+    deleteItem
+)
 
 export default router;

@@ -40,6 +40,8 @@ interface SelectOption {
 const MyPostsPage = () => {
     const user = useUserStore((state => state.user)); 
     // extracts the user field from the global state
+    const idToken = user?.idToken;
+
     const navigate = useNavigate();
     const [items, setItems] = useState<Item[]>([]); // an array of items
     const [locationOptions, setLocationOptions] = useState<SelectOption[]>([]);
@@ -56,19 +58,20 @@ const MyPostsPage = () => {
     }) // creates a dynamic object with these fields
 
     const fetchUserItems = async () => {
+        if (!idToken) return;
         try {
             const params = new URLSearchParams();
 
-            if (!user?.email) return;
-
-            params.append('email', user.email);
             if (filters.category) params.append('category', filters.category);
             if (filters.location) params.append('location', filters.location);
             if (filters.dateLost) params.append('dateLost', filters.dateLost);
             if (filters.dateFound) params.append('dateFound', filters.dateFound);
             if (filters.type) params.append('type', filters.type);
 
-            const res = await axios.get<ItemResponse>(`http://localhost:8080/api/items/user?${params.toString()}`);
+            const res = await axios.get<ItemResponse>(
+                `http://localhost:8080/api/items/user?${params.toString()}`,
+                { headers: { Authorization: `Bearer ${idToken}` } } // sends token to backend for authorisation 
+            );
             setItems(res.data.data);
         } catch (err: any) {
             if (err.response?.status === 429) {
@@ -83,7 +86,9 @@ const MyPostsPage = () => {
 
     const fetchLocations = async () => {
         try {
-            const res = await axios.get<LocationResponse>('http://localhost:8080/lost/locations');
+            const res = await axios.get<LocationResponse>('http://localhost:8080/api/items/locations', {
+                headers: { Authorization: `Bearer ${idToken}` }, // token from CredentialResponse
+            });
             if (res.data.success) {
                 const formatted = res.data.data.map((loc) => ({
                     value: loc,
@@ -100,7 +105,7 @@ const MyPostsPage = () => {
 
     const handleDelete = async (id: string) => {
         try {
-            await axios.delete(`http://localhost:8080/lost/${id}`);
+            await axios.delete(`http://localhost:8080/api/items/${id}`);
             toast.success('Item deleted');
             setItems((prev) => prev.filter((item) => item._id !== id)); // remove from the array of items
         } catch {
@@ -116,9 +121,10 @@ const MyPostsPage = () => {
         });
 
     useEffect(() => {
+        if (!idToken) return;
         fetchLocations();
         fetchUserItems();
-    }, [user]);
+    }, [idToken]);
 
     return (
         <div>
@@ -203,9 +209,9 @@ const MyPostsPage = () => {
                 {items.map((item) => (
                     <Card key={item._id} withBorder shadow="sm">
                         {item.image && (
-                            <CardSection>
+                            <Card.Section>
                                 <Image src= {`/uploads/${item.image}`} alt={item.name} height={180}/>
-                            </CardSection>
+                            </Card.Section>
                         )}
                         <Text fw={600}>{item.name}</Text>
                         <Text size="sm" c="dimmed">

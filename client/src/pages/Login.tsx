@@ -53,6 +53,7 @@ const Login = () => {
                 name: data.name,
                 email: data.email,
                 avatar: data.avatar,
+                idToken: token
             });
 
             navigate('/');
