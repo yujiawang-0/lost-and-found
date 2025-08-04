@@ -8,9 +8,8 @@ import SettingsPage from './pages/SettingsPage';
 import CreatePage from './pages/CreatePage/CreatePage';
 import MainLayout from './pages/MainLayout';
 import { Toaster } from 'react-hot-toast';
-import Login from './pages/Login';
-
-
+import AuthenticationForm from './pages/AuthenticationForm';
+import RegisterPage from './pages/AuthPages/Register';
 
 
 export default function App() {
@@ -22,7 +21,7 @@ export default function App() {
           <Route element={<MainLayout />}>
             <Route index element={<LostPage />} />
             <Route path="/lost" element={<LostPage />} />
-            <Route path="/login" element={<Login />} />
+            <Route path="/login" element={<AuthenticationForm />} />
             <Route path="/found" element={<FoundPage />} />
             <Route path="/create" element={<CreatePage />} />
             <Route path="/lost/:id" element={<ItemDetailPage />} />
