@@ -7,15 +7,16 @@ import AddressInput from './AddressInput';
 import { useNavigate } from 'react-router';
 import toast from 'react-hot-toast';
 import axios from 'axios';
+import { getAuth } from "firebase/auth";
 
 interface FormValues {
+  type: string;
   name: string;
   description: string;
   image: File | null;
   category: string;
   location: string;
   dateLost: string;
-  status: string;
 } // define the shape of the data 
 
 interface Location {
@@ -28,13 +29,13 @@ function CreatePage() {
   const form = useForm<FormValues>({ // actual instance of FormValues
     mode: 'uncontrolled',
     initialValues: {
+      type: "",
       name: "",
       description: "",
       image: null,
       category: "",
       location: "",
       dateLost: "",
-      status: "lost"
     }
   });
   // form is the in-memory representations of the fields
@@ -49,8 +50,21 @@ function CreatePage() {
 
   const handleSubmit = async (values: FormValues) => { // passes an interface object 
     try {
+      const auth = getAuth();
+      const user = auth.currentUser; // inbuilt to find out the user now
+
+      if (!user) {
+        alert("You are not logged in");
+        return;
+      }
+      const idToken = await user.getIdToken(true);
+      // force refresh the token, since token expires in one hour when you store in localStorage
+      // tokens are different, but they decode to the same info 
+
+      // form.append('status', values.type) stores the values.type under the name of status in the req.body
       const formData = new FormData();
       // FormData is a new empty notebook to store key value pairs 
+      formData.append('status', values.type);
       formData.append('name', values.name);
       formData.append('description', values.description);
       formData.append('category', values.category);
@@ -62,58 +76,66 @@ function CreatePage() {
       if (values.dateLost){
         formData.append('dateLost', values.dateLost);
       }
-      
-      formData.append('status', values.status);
 
       if (values.image) { // if image is provided
         formData.append('image', values.image);
       }
-      // chat told me that to include images the user uploaded
-      // we cannot use body: JSON.stringify(values) like usual
 
-      const response = await axios.post('http://localhost:8080/lost', formData, 
-      //   {
-      //   headers: {
-      //     'Content-Type': 'multipart/form-data',
-      //   },
-      // }
-      );
+      if (values.type === 'Lost') {
+        const response = await axios.post('http://localhost:8080/lost', formData, 
+                {
+          headers: {
+             Authorization: `Bearer ${idToken}`,
+            'Content-Type': 'multipart/form-data',
+          },
+            }
+        );
+        // at login firebase creates idToken on the spot with the current user info
+        // sends the retrieved idToken to authenticateUser middleware 
+        // authenticateUser middleware will check this idToken and decode the firebase idToken 
+        // postLostItem controller will proceed to store this decoded firebase idToken, tgt with other fields, into mongolDB database 
 
-    if (response.status === 201) {
-      navigate('/lost');
-    } else {
-      console.error('Upload failed:', response.data);
-      toast.error('Failed to add a new item');
-    }
+          if (response.status === 201) {
+            toast.success("Post created successfully!");
+            navigate('/lost');
+          } else {
+            console.error('Upload failed:', response.data);
+            toast.error('Failed to add a new item');
+          }
+      } else {
+        const response = await axios.post('http://localhost:8080/found', formData, 
+                {
+          headers: {
+            Authorization: `Bearer ${idToken}`,
+            'Content-Type': 'multipart/form-data',
+          },
+            }
+        );
+          if (response.status === 201) {
+            toast.success("Post created successfully!");
+            navigate('/found');
+          } else {
+            console.error('Upload failed:', response.data);
+            toast.error('Failed to add a new item');
+          }
+      }
+      
+    
   } catch (err: any) {
     console.error('Upload error:', err);
     toast.error('Something went wrong during submission');
   }
 };
 
-
-  //     const response = await fetch('/lost', {
-  //       method: 'POST', 
-  //       body: formData
-  //     });
-
-  //     const result = await response.json();
-
-  //     if (response.ok) {
-  //       navigate('/lost');
-  //     } else {
-  //       console.error('Failed');
-  //       toast.error('Failed to add a new item');
-  //       // i was thinking of adding a toast here 
-  //       // to tell the user she/he cannot submit item
-  //     }
-  //   } catch (err) {
-  //     console.error('error:', err);
-  //   }
-  // };
-
   return (
     <div>
+      <Select
+        mt="md"
+        label="Type"
+        placeholder= "Select a type"
+        data={['Lost', 'Found']}
+        {...form.getInputProps('type')}
+      />
       <TextInput
         label="Name of Item"
         placeholder="Name"

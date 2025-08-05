@@ -1,10 +1,10 @@
-import Item from "../models/item.model";
+import Item from "../models/item.model.js";
 
 export const getUserItems = async (req, res) => {
     try {
         const {category, location, type, dateLost} = req.query;
 
-        const filter = {email: req.user.email};
+        const filter = {uid: req.user.uid};
         if (category) filter.category = category;
         if (location) filter.location = location;
         if (type) filter.type = type;

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router';
-import { GoogleLogin} from '@react-oauth/google';
-import type { CredentialResponse } from '@react-oauth/google';
+import { signInWithPopup } from 'firebase/auth';
+import { auth, googleProvider } from '../firebase';
 import {useUserStore} from './userStore';
 
 
@@ -10,57 +10,30 @@ const Login = () => {
     const setUser = useUserStore((state) => state.setUser); 
     // gives the setUser function in the useUserStore
 
-    const handleLogin = async (credentialResponse: CredentialResponse) => {
-        const token = credentialResponse.credential; // contains user info 
-        // ggl sends a CredentialResponse object to this function 
-        // via onSuccess callback in <GoogleLogin /> 
-        // CredentialResponse has fields like 
-        // ggl client id 
-        // credential (string that contains user's info)
-        
-        if (!token) {
-            alert('Google login failed');
-            return;
-        }
+    const handleLogin = async () => {
+        try {
+            const result = await signInWithPopup(auth, googleProvider);
+            const user = result.user;
 
-        
-        try{
-            const res = await fetch('/api/auth/google', {
-							  method: 'POST',
-							  headers: {
-							    Authorization: `Bearer ${token}`,
-							    'Content-Type': 'application/json',
-							  },
-							});
-							// sends token to backend (the credential field) (with Authorization header) 
-							// backend is where ggl library will verify it 
-							// and extract user data 
-							// backend has router.post('/auth/google', verifyGoogleToken, createUser);
+            // get firebase-issued ID token
+            // a very long encoded string that stores the user info 
+            const idToken = await user.getIdToken();
 
 
-            const data = await res.json();
-            // response the backend sends to the frontend
-            // backend returns user data (in createUser) 
-
-            if (!res.ok) {
-                alert('Login failed: ' + data.message);
-                return;
-            }
-
-            // save user details to global zustand store 
-            // zustand store is only frontend 
+            // store user info in  global zustand store for frontend 
             setUser({
-                name: data.name,
-                email: data.email,
-                avatar: data.avatar,
-                idToken: token
+                name: user.displayName || '',
+                email: user.email || '',
+                avatar: user.photoURL || '',
+                idToken: idToken,  
             });
-
-            navigate('/');
-            // navigate back to home page 
+            
+            
+            navigate('/lost');
+            
 
         } catch (err) {
-            alert('Something went wrong during login');
+            alert('Google login failed');
         }
     };
 
@@ -69,15 +42,10 @@ const Login = () => {
         <h1>Welcome to Lost & Found</h1>
         <p>Please log in with Google to continue</p>
         <div>
-            <GoogleLogin
-                onSuccess= {handleLogin}
-                onError= {() => {
-                    alert('Google Login failed. Please try again')
-                }}
-            />
+            <button onClick= {handleLogin}>Login with Google</button>
         </div>
     </div>
   )
 }
 
-export default Login
+export default Login;

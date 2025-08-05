@@ -8,6 +8,7 @@ import SettingsPage from './pages/SettingsPage';
 import CreatePage from './pages/CreatePage';
 import MainLayout from './pages/MainLayout';
 import { Toaster } from 'react-hot-toast';
+import Login from './pages/Login';
 
 
 
@@ -23,6 +24,7 @@ export default function App() {
             <Route path="/lost" element={<LostPage />} />
             <Route path="/found" element={<FoundPage />} />
             <Route path="/create" element={<CreatePage />} />
+            <Route path="/login" element={<Login />} />
             <Route path="/lost/:id" element={<ItemDetailPage />} />
             <Route path="/found/:id" element={<ItemDetailPage />} />
             <Route path="/settings" element={<SettingsPage />} />

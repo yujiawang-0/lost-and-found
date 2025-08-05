@@ -21,11 +21,12 @@
   },
   "homepage": "https://github.com/yujiawang-0/lost-and-found#readme",
   "dependencies": {
-    "@upstash/ratelimit": "^2.0.5",
-    "@upstash/redis": "^1.35.1",
+    "@upstash/ratelimit": "^2.0.6",
+    "@upstash/redis": "^1.35.3",
     "cors": "^2.8.5",
     "dotenv": "^16.6.1",
     "express": "^4.21.2",
+    "firebase-admin": "^13.4.0",
     "google-auth-library": "^10.2.0",
     "mongoose": "^8.15.1",
     "multer": "^2.0.2"
