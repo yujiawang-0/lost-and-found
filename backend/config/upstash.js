@@ -1,9 +1,10 @@
+import dotenv from "dotenv";
+dotenv.config();
+
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
 
-import dotenv from "dotenv";
 
-dotenv.config();
 
 // Create a new ratelimiter, that allows 30 requests per 10 seconds
 const ratelimit = new Ratelimit({

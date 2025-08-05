@@ -1,21 +1,22 @@
-import ratelimit from "../config/upstash.js"
+// backend/middleware/rateLimiter.js
+import ratelimit from "../config/upstash.js";
 
 const rateLimiter = async (req, res, next) => {
-    try {
-        const {success} = await ratelimit.limit("my-limit-key") // userid (authenticator) goes here or ip address
-        
-        if (!success) {
-            return res.status (429).json({
-                message:"Too many requests, please try again later"
-            })
-        }
+  try {
+    const identifier = req.ip || "global";
+    const { success } = await ratelimit.limit(identifier);
 
-        next()
-
-    } catch (error) {
-        console.log("Rate limit error", error);
-        next(error);
+    if (!success) {
+      return res.status(429).json({
+        message: "Too many requests. Please try again later.",
+      });
     }
+
+    next();
+  } catch (error) {
+    console.error("Rate limiter error:", error);
+    next(error);
+  }
 };
 
 export default rateLimiter;

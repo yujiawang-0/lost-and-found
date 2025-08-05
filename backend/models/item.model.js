@@ -42,7 +42,7 @@ const itemSchema = new mongoose.Schema({
     },
     status: {
         type: String, 
-        enum: ['lost', 'found'],
+        enum: ['Lost', 'Found'],
         required: true,
         immutable: true
     },
@@ -68,6 +68,7 @@ const itemSchema = new mongoose.Schema({
         type: Date, 
         required: false,
     }
+    uid: String, 
     }, {
         timestamps: true //createdAt, updatedAt
     });

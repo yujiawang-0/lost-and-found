@@ -1,7 +1,10 @@
 import dotenv from "dotenv";
 dotenv.config();
+
 import cors from 'cors'
 import express from 'express';
+import path from 'path';
+
 import { connectDB } from './config/db.js';
 import foundItemRoute from "./routes/foundItemRoute.js";
 import lostItemRoute from "./routes/lostItemRoute.js";
@@ -29,7 +32,7 @@ app.use((req, res, next) => {
     next();
 });
 
-// authentication check middleware to be added here
+app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
 
 
