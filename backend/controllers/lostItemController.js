@@ -5,7 +5,7 @@ import mongoose from 'mongoose';
 export const getLostItems = async (req, res) => {
     //res.status(200).send("you just fetched lost items");
     try {
-        const items = await Item.find({status: 'lost'}).sort({ createdAt: -1 });
+        const items = await Item.find({status: 'Lost'}).sort({ createdAt: -1 });
         res.status(200).json({success: true, data: items});
     } catch (error) {
         console.error("Error in getLostItems controller", error);
@@ -28,7 +28,7 @@ export const getLostItemById = async (req, res) => {
 
 export const getFilteredLostItems = async (req, res) => {
     try {
-        const query = {status: 'lost', ...req.query}; 
+        const query = {status: 'Lost', ...req.query}; 
         const items = await Item.find(query).sort({ createdAt: -1 });
         res.status(200).json({success: true, data: items});
         // here are the items u asked for, and the request worked 
@@ -37,18 +37,10 @@ export const getFilteredLostItems = async (req, res) => {
     }
 }
 
-// export const getLostLocations = async (req, res) => {
-//     try {
-//         const locations = await Item.distinct('location', {status:'lost'});
-//         res.status(200).json({success: true, data: locations});
-//     } catch (error) {
-//         res.status(500).json({success: false, message: "Server Error"});
-//     }
-// }
 
 export const getLostLocations = async (req, res) => {
     try {
-        const locations = await Item.find({ status: 'lost' }).select('location -_id');
+        const locations = await Item.find({ status: 'Lost' }).select('location -_id');
 
         // if locations are objects, extract their address strings
         const locationStrings = locations
@@ -70,7 +62,13 @@ export const getLostLocations = async (req, res) => {
 export const postLostItem = async (req, res) => {
     const item = req.body; // multer parse text fields into body
     const file = req.file; // multer will attach file to req.file
+    const id = req.user.uid;
 
+    console.log("Decoded user:", req.user);
+    console.log("Received data:", req.body);
+    console.log("Uploaded file:", req.file);
+    console.log("status of obj", req.body.status);
+    
     // multer separates the text fields from the uploaded file 
 
     if(!item.name || !item.description) {
@@ -79,14 +77,17 @@ export const postLostItem = async (req, res) => {
 
     const newItem = new Item({
         ...item, 
-        image: file ? file.filename : null
+        image: file ? file.filename : null,
+        uid: id
     }); // creates item in backend
     // follow naming in the schema 
 
     try { 
-        await newItem.save();
+        const savedItem = await newItem.save();
+        console.log("✅ Saved item:", savedItem);
         res.status(201).json({success: true, data: newItem});
     } catch (error) {
+        console.error("❌ Failed to save new item:", error);
         res.status(500).json({success: false, message: "Server Error"});
     }
 }

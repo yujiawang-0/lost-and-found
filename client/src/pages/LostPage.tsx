@@ -29,7 +29,8 @@ const LostPage = () => {
         location: '',
         dateLost: ''
     }); // creates an object with three fields
-
+    
+//    const [locationOptions, setLocationOptions] = useState<SelectOption[]>([]);
     const [locationOptions, setLocationOptions] = useState<string[]>([]);
     
     // creates an array of string to store the locations
@@ -73,12 +74,11 @@ const LostPage = () => {
     const fetchLocations = async () => {
         try {
             const response = await axiosInstance.get('/lost/locations');
+            console.log("Raw /lost/locations response:", response.data);
             if (response.data.success) {
-            const formatted = response.data.data.map((loc: string) => ({
-                value: loc,
-                label: loc,
-            }));
-            setLocationOptions(formatted); // ← now it has .value and .label
+            const formatted = response.data.data;
+            setLocationOptions(formatted);
+            console.log("Fetched locations:", response.data.data);
             } else {
             toast.error('Failed to fetch locations');
             }
@@ -93,6 +93,15 @@ const LostPage = () => {
         fetchPosts();
         fetchLocations();
         }, []);
+
+    useEffect(() => {
+    fetchPosts();
+    fetchLocations();
+}, []);
+
+    useEffect(() => {
+    console.log("Current location options:", locationOptions);
+    }, [locationOptions]);
 
     
     //console.log("Rendering posts:", posts.map(p => p.createdAt));
@@ -148,7 +157,7 @@ const LostPage = () => {
                         classNames={classes}
                         value= {filters.location}
                         onChange={(value) => setFilters((prev) => ({...prev, location: value}))}
-                        data= {locationOptions} // dynamic options locaded from bakend
+                data= {locationOptions} 
                         clearable
                         mb = "sm"
                     />

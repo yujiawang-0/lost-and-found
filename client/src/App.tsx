@@ -24,6 +24,7 @@ export default function App() {
             <Route path="/login" element={<AuthenticationForm />} />
             <Route path="/found" element={<FoundPage />} />
             <Route path="/create" element={<CreatePage />} />
+            <Route path="/login" element={<Login />} />
             <Route path="/lost/:id" element={<ItemDetailPage />} />
             <Route path="/found/:id" element={<ItemDetailPage />} />
             <Route path="/settings" element={<SettingsPage />} />

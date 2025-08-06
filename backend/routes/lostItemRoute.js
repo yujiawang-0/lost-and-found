@@ -3,6 +3,7 @@ import {getLostItems, getLostItemById, postLostItem, getFilteredLostItems,
      updateLostItem, deleteLostItem, 
      getLostLocations} from '../controllers/lostItemController.js';
 import multer from 'multer';
+import { authenticateUser } from '../middleware/authenticateUser.js';
 const upload = multer({ dest: 'uploads/' });
 
 
@@ -14,7 +15,7 @@ router.get("/filter", getFilteredLostItems);
 router.get("/locations", getLostLocations);
 
 router.get("/:id", getLostItemById);
-router.post("/", upload.single('image'), postLostItem);
+router.post("/", authenticateUser, upload.single('image'), postLostItem);
 
 router.put("/:id", updateLostItem);
 router.delete("/:id", deleteLostItem); 
