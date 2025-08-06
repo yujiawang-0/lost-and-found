@@ -27,7 +27,7 @@ const LostPage = () => {
         dateLost: ''
     }); // creates an object with three fields
     
-   const [locationOptions, setLocationOptions] = useState<SelectOption[]>([]);
+//    const [locationOptions, setLocationOptions] = useState<SelectOption[]>([]);
     const [locationOptions, setLocationOptions] = useState<string[]>([]);
     
     // creates an array of string to store the locations

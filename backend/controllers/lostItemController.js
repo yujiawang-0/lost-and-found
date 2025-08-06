@@ -77,7 +77,7 @@ export const postLostItem = async (req, res) => {
 
     const newItem = new Item({
         ...item, 
-        image: file ? file.filename : null
+        image: file ? file.filename : null,
         uid: id
     }); // creates item in backend
     // follow naming in the schema 

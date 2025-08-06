@@ -67,7 +67,7 @@ const itemSchema = new mongoose.Schema({
     dateFound: {
         type: Date, 
         required: false,
-    }
+    },
     uid: String, 
     }, {
         timestamps: true //createdAt, updatedAt
