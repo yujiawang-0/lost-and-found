@@ -13,18 +13,22 @@ import {
 import { useForm } from '@mantine/form';
 import { upperFirst, useToggle } from '@mantine/hooks';
 import { FaGoogle } from "react-icons/fa";
-import { useState, type ComponentProps } from 'react';
+import { useEffect, useState, type ComponentProps } from 'react';
 import { useAuth } from '../contexts/authContext/index.js';
-import { doCreateUserWithEmailAndPassword, doSignInWithEmailAndPassword } from '../firebase/auth.js';
+import { doCreateUserWithEmailAndPassword, doSignInWithEmailAndPassword, doSignInWithGoogle } from '../firebase/auth.js';
+import { Navigate } from 'react-router';
+import toast from 'react-hot-toast';
 
 type PaperProps = ComponentProps<typeof Paper>;
 
-
+/*
+* authentication form include sign in with email, sign in with google, and register with email
+*/
 export default function AuthenticationForm(props: PaperProps) {
-  const { userLoggedIn } = useAuth();
+  const { userLoggedIn, currentUser } = useAuth();
 
   const [type, toggle] = useToggle(['login', 'register']);
-  const [isSigningIn, setSigningIn] = useState(false);
+  const [isSigningIn, setIsSigningIn] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   
   const form = useForm({
@@ -43,9 +47,9 @@ export default function AuthenticationForm(props: PaperProps) {
 
 
   const handleSubmit = async (values: typeof form.values) => {
-    if (!isSigningIn) {
-      setSigningIn(true);
-      
+    if (isSigningIn) return;
+    setIsSigningIn(true);
+    try {
       if (type === 'login') {
         // logging in
         await doSignInWithEmailAndPassword(values.email, values.password)
@@ -55,18 +59,48 @@ export default function AuthenticationForm(props: PaperProps) {
         await doCreateUserWithEmailAndPassword(values.email, values.password)
         console.log('Register with', values.name, values.email, values.password);
       }
+    } catch (err: any) {
+      setErrorMessage(err.errorMessage)
+    } finally {
+      setIsSigningIn(false);
     }
+  };
     
+
+  const onGoogleSignIn = async () => {
+    if (isSigningIn) return;
+    setIsSigningIn(true);
+
+    try {
+      await doSignInWithGoogle();
+      console.log('attempted login with google')
+    } catch (err: any) {
+      setErrorMessage(err.errorMessage);
+    } finally {
+      setIsSigningIn(false);
+    }
   };
 
+  useEffect(() => {
+  if (currentUser) {
+    console.log("Current logged in user:", currentUser);
+  } else {
+    console.log("No user is currently logged in.");
+  }
+}, [currentUser]);
+
   return (
+    <div>
+      {/* {userLoggedIn && (<Navigate to={'/'} replace={true} />)} */}
+      {errorMessage && toast.error(errorMessage)}
+
     <Paper radius="md" p="lg" withBorder {...props}>
       <Text size="lg" fw={500}>
-        Welcome to Mantine, {type} with
+        Welcome to Lost & Found, {type} with
       </Text>
 
       <Group grow mb="md" mt="md">
-        <Button leftSection={<FaGoogle />} variant="default" {...props}>Google</Button>
+        <Button leftSection={<FaGoogle />} variant="default" onClick={() => onGoogleSignIn()}>Google</Button>
       </Group>
 
       <Divider label="Or continue with email" labelPosition="center" my="lg" />
@@ -124,5 +158,6 @@ export default function AuthenticationForm(props: PaperProps) {
         </Group>
       </form>
     </Paper>
+    </div>
   );
 }

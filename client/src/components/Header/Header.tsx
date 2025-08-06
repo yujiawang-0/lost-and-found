@@ -37,30 +37,35 @@ import { useDisclosure } from '@mantine/hooks';
 import classes from './DoubleHeader.module.css';
 import lighting from './ActionToggle.module.css';
 import { Link } from "react-router";
+import { doSignOut } from "../../firebase/auth";
+import { useAuth } from "../../contexts/authContext";
+
 
 const mainLinks = [
   { link: '/lost', label: 'Lost' },
   { link: '/found', label: 'Found' },
 ];
 
-const user = {
-  name: 'Jane Spoonfighter',
-  email: 'janspoon@fighter.dev',
-  image: 'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-5.png',
-};
-
 
 export function DoubleHeader() {
     const [opened, { toggle }] = useDisclosure(false);
     const [active, setActive] = useState(0);
     const [userMenuOpened, setUserMenuOpened] = useState(false);
+    const { currentUser } = useAuth();
+
+
+    const user = {
+    name: currentUser.displayName || 'Jane Spoonfighter',
+    email: currentUser.email || 'janspoon@fighter.dev',
+    image: currentUser.photoURL || 'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-5.png',
+    };
 
     const theme = useMantineTheme();
       const { colorScheme, setColorScheme } = useMantineColorScheme();
       const computedColorScheme = useComputedColorScheme('light');
       const toggleColorScheme = () => {
         setColorScheme(computedColorScheme === 'dark' ? 'light' : 'dark');
-      };
+    };
 
 
   const mainItems = mainLinks.map((item, index) => (
@@ -77,6 +82,16 @@ export function DoubleHeader() {
       {item.label}
     </Anchor>
   ));
+
+  const handleLogOut = async () => {
+    try {
+        if (!window.confirm("Are you sure you want to logout?")) return; 
+        await doSignOut();
+        console.log("User signed out");
+    } catch (err) {
+        console.error('Error in signing out:', err);
+    }
+  }
 
   return (
     <header className={classes.header}>
@@ -168,7 +183,7 @@ export function DoubleHeader() {
                     <Menu.Item leftSection={<Settings size={16} />}>
                         Account settings
                     </Menu.Item>
-                    <Menu.Item leftSection={<LogOut size={16} />}>Logout</Menu.Item>
+                    <Menu.Item leftSection={<LogOut size={16} />} onClick={handleLogOut}>Logout</Menu.Item>
 
                     <Menu.Divider />
                     <Menu.Item color="red" leftSection={<CircleOff size={16} />}>

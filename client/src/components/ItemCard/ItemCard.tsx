@@ -45,7 +45,7 @@ export function ItemCard({item, setLostItems}) {
         e.preventDefault(); // get rid of the navigation behaviour of the whole card
 
         if (!window.confirm("Are you sure you want to delete this item?")) return; 
-        // can use mantine modal instead.
+        // maybe can use mantine modal instead.
 
         try {
             await axiosInstance.delete(`/lost/${id}`)
