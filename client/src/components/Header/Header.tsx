@@ -55,9 +55,11 @@ export function DoubleHeader() {
 
 
     const user = {
-    name: currentUser.displayName || 'Jane Spoonfighter',
-    email: currentUser.email || 'janspoon@fighter.dev',
-    image: currentUser.photoURL || 'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-5.png',
+        name: currentUser?.displayName || 'Jane Spoonfighter',
+        email: currentUser?.email || 'janspoon@fighter.dev',
+        image:
+            currentUser?.photoURL ||
+            'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-5.png',
     };
 
     const theme = useMantineTheme();

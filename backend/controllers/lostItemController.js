@@ -84,10 +84,10 @@ export const postLostItem = async (req, res) => {
 
     try { 
         const savedItem = await newItem.save();
-        console.log("✅ Saved item:", savedItem);
+        console.log("Saved item:", savedItem);
         res.status(201).json({success: true, data: newItem});
     } catch (error) {
-        console.error("❌ Failed to save new item:", error);
+        console.error("Failed to save new item:", error);
         res.status(500).json({success: false, message: "Server Error"});
     }
 }
