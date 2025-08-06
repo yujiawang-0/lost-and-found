@@ -5,21 +5,16 @@ const userSchema = new mongoose.Schema({
         type: String, 
         immutable: true,
         required: true,
-        unique: true
     }, 
-    password : {
+    email: {
         type: String, 
         required: true
     },
-    contact : {
-        type: String, 
-        required: true
-    },
-    image: {
+    avatar: {
         type: String, 
         required: false,
     }
-});
+}, { timestamps: true });
 
 const User = mongoose.model('User', userSchema);
 

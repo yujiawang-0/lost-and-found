@@ -18,6 +18,17 @@ interface Post {
     createdAt: string;
 }
 
+interface LocationResponse {
+  success: boolean;
+  data: string[];
+}
+
+interface PostResponse {
+  success: boolean;
+  data: Post[];
+}
+
+
 const LostPage = () => {
     // create an array of Posts
     const [posts, setPosts] = useState<Post[]>([]);
@@ -25,11 +36,12 @@ const LostPage = () => {
         category: '', 
         location: '',
         dateLost: ''
-    }); // creates an object with three fields
-
+    }); // creates an object with three fields, setFilters is the function
+    
+    
     const [locationOptions, setLocationOptions] = useState<string[]>([]);
     
-    // creates an array of string to store the locations
+    // creates an array of SelectOption objects to store the locations
 
     const [isRateLimited, setIsRateLimited] = useState(false)
     const [lostItems, setLostItems] = useState([]);
@@ -45,7 +57,7 @@ const LostPage = () => {
             if (activeFilters.dateLost) params.append('dateLost', activeFilters.dateLost);
 
             const query = params.toString() ? `?${params.toString()}` : '';
-            const response = await axios.get(`http://localhost:8080/lost/filter${query}`);
+            const response = await axios.get<PostResponse>(`http://localhost:8080/lost/filter${query}`);
 
             console.log("Fetched /lost/filter result:", response.data);
 
@@ -69,13 +81,12 @@ const LostPage = () => {
 
     const fetchLocations = async () => {
         try {
-            const response = await axios.get('http://localhost:8080/lost/locations');
+            const response = await axios.get<LocationResponse>('http://localhost:8080/lost/locations');
+            console.log("Raw /lost/locations response:", response.data);
             if (response.data.success) {
-            const formatted = response.data.data.map((loc: string) => ({
-                value: loc,
-                label: loc,
-            }));
-            setLocationOptions(formatted); // ← now it has .value and .label
+            const formatted = response.data.data;
+            setLocationOptions(formatted);
+            console.log("Fetched locations:", response.data.data);
             } else {
             toast.error('Failed to fetch locations');
             }
@@ -90,6 +101,15 @@ const LostPage = () => {
         fetchPosts();
         fetchLocations();
         }, []);
+
+    useEffect(() => {
+    fetchPosts();
+    fetchLocations();
+}, []);
+
+    useEffect(() => {
+    console.log("Current location options:", locationOptions);
+    }, [locationOptions]);
 
 
     return (
@@ -131,7 +151,7 @@ const LostPage = () => {
                 placeholder= "Start typing a location"
                 value= {filters.location}
                 onChange={(value) => setFilters((prev) => ({...prev, location: value}))}
-                data= {locationOptions} // dynamic options locaded from bakend
+                data= {locationOptions} 
                 clearable
                 mb = "sm"
             />

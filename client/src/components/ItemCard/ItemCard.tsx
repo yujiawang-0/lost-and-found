@@ -51,7 +51,7 @@ export function ItemCard({item}) {
             className={classes.card}
             >
         <Card.Section>
-            <Image src={image} alt={name} height={180} />
+            <Image src={`http://localhost:8080/uploads/${image}`} alt={name} height={180} />
         </Card.Section>
 
         <Card.Section className={classes.section} mt="md">

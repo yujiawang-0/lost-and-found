@@ -1,11 +1,15 @@
 import dotenv from "dotenv";
 dotenv.config();
+
 import cors from 'cors'
 import express from 'express';
+import path from 'path';
+
 import { connectDB } from './config/db.js';
 import foundItemRoute from "./routes/foundItemRoute.js";
 import lostItemRoute from "./routes/lostItemRoute.js";
-import rateLimiter from "./middleware/rateLimiter.js"
+import userItemsRoute from './routes/userItemsRoute.js';
+import rateLimiter from "./middleware/rateLimiter.js";
 
 
 const app = express();
@@ -29,7 +33,7 @@ app.use((req, res, next) => {
     next();
 });
 
-// authentication check middleware to be added here
+app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
 
 
@@ -38,6 +42,7 @@ app.use((req, res, next) => {
 app.use("/lost", lostItemRoute);
 // take all the routes defined in lostItemRoute and mount them at the path /lost
 app.use("/found", foundItemRoute);
+app.use('/api/items', userItemsRoute);
 
 app.get("/", (req, res) => {
     res.send("Server is ready");
